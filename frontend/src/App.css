@@ -1,0 +1,20 @@
+/* App.css */
+
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: #f9f9f9;
+}
+
+#root {
+  display: flex;
+  justify-content: center;
+}
+
+.app-wrapper {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}

@@ -1,0 +1,104 @@
+/* 기본 초기화 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Apple SD Gothic Neo", sans-serif;
+    background: #f5f5f5; /* 💻 데스크탑 좌우 여백 영역 색 */
+    height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  #root {
+    width: 100vw;
+    min-height: 100vh;
+  }
+  
+  /* 앱 전체 wrapper */
+  .app-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    background: white;
+    box-sizing: border-box;
+    padding: 0;
+    padding-bottom: 64px; /* 📱 모바일 기본값: 여백 없음 */
+  }
+  
+  /* 💻 데스크탑일 경우: 가운데 정렬 + 좌우 여백 */
+  @media (min-width: 768px) {
+    .app-wrapper {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 32px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+    }
+  }
+  
+  /* 공통 버튼 */
+  .btn-primary {
+    width: 100%;
+    padding: 16px 0;
+    background-color: #ff6f00;
+    color: white;
+    border: none;
+    border-radius: 0;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+  
+  /* 카드 */
+  .card {
+    width: 100%;
+    padding: 16px;
+    background: #f5f5f5;
+    border-bottom: 1px solid #eee;
+    box-sizing: border-box;
+  }
+  
+  /* 제목 */
+  .title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin: 20px 16px;
+    color: #333;
+    text-align: center;
+  }
+  
+  .input {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    margin-bottom: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+    
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    max-width: 480px;
+    height: 56px;
+    background: #ffffff;
+    border-top: 1px solid #ddd;
+    display: flex;
+    box-shadow: 0 -1px 4px rgba(0,0,0,0.1);
+  }
+  
+  .nav-item {
+    flex: 1;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #666;
+    text-decoration: none;
+    padding-top: 4px;
+  }
+  
+  .nav-item.active {
+    color: #ff6f00;
+    font-weight: bold;
+  }
