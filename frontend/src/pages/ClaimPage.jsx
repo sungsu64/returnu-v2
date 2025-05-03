@@ -1,22 +1,32 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function ClaimPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim()) return alert("이름을 입력해주세요.");
 
-    // ✅ 백엔드로 보내는 자리 (지금은 콘솔)
-    console.log("📦 수령 처리:", {
-      itemId: id,
-      claimantName: name,
-    });
+    try {
+      const res = await fetch(`http://localhost:8090/api/lost-items/claim/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ claimed_by: name }),
+      });
 
-    alert("수령이 기록되었습니다! (임시)");
-    setName("");
+      if (!res.ok) throw new Error("서버 오류 발생");
+
+      alert("✅ 수령 처리가 완료되었습니다.");
+      navigate("/");
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -35,6 +45,7 @@ export default function ClaimPage() {
         <button className="btn-primary" type="submit">
           ✅ 수령 처리하기
         </button>
+        {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
     </>
   );

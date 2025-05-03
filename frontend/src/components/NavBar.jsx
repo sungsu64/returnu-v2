@@ -1,4 +1,3 @@
-// src/components/NavBar.jsx
 import React from "react";
 import { NavLink } from "react-router-dom";
 
@@ -13,6 +12,9 @@ export default function NavBar() {
       </NavLink>
       <NavLink to="/lost/create" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
         ➕<br/>등록
+      </NavLink>
+      <NavLink to="/my" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+        👤<br/>내 정보
       </NavLink>
     </nav>
   );
