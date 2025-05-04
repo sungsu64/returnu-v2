@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import mainImage from "./assets/main_illustration.png"; // 메인용 일러스트 이미지
 import "../mobile-ui.css";
 
 const CATEGORY_LIST = ["전체", "지갑", "휴대폰", "노트북", "이어폰", "열쇠", "기타"];
@@ -10,7 +11,8 @@ export default function HomePage() {
   const [category, setCategory] = useState("전체");
   const [openCat, setOpenCat] = useState(false);
   const catRef = useRef();
-  const [posts, setPosts] = useState([]);
+
+  const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -25,22 +27,19 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    async function fetchRecent() {
-      setLoading(true);
-      setError(null);
+    async function fetchNotices() {
       try {
-        const res = await fetch("http://localhost:8090/api/lost-items?limit=10");
-        if (!res.ok) throw new Error("데이터를 불러오지 못했습니다");
+        const res = await fetch("http://localhost:8090/api/notices");
+        if (!res.ok) throw new Error("공지사항을 불러오지 못했습니다.");
         const data = await res.json();
-        console.log("최근 분실물:", data);
-        setPosts(data);
+        setNotices(data);
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     }
-    fetchRecent();
+    fetchNotices();
   }, []);
 
   const handleSearch = (e) => {
@@ -54,8 +53,10 @@ export default function HomePage() {
       <h1 className="title">📦 ReturnU</h1>
       <p style={{ textAlign: "center", color: "#607d8b", marginBottom: "24px" }}>학교 분실물 검색 서비스</p>
 
+      {/* 🔍 검색창 */}
       <form onSubmit={handleSearch} style={{ maxWidth: "90%", margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
+          {/* 카테고리 드롭다운 */}
           <div
             ref={catRef}
             style={{
@@ -106,6 +107,8 @@ export default function HomePage() {
               </ul>
             )}
           </div>
+
+          {/* 검색 입력창 */}
           <div style={{ position: "relative", flex: 1, height: "48px" }}>
             <input
               type="text"
@@ -142,25 +145,41 @@ export default function HomePage() {
         </div>
       </form>
 
-      <section style={{ marginTop: "32px", padding: "0 16px" }}>
-        <h2 style={{ fontSize: "1.2rem", marginBottom: "16px", color: "#607d8b" }}>최근 등록된 분실물</h2>
-        {loading && <p>로딩 중...</p>}
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {!loading && posts.length === 0 && <p>등록된 분실물이 없습니다.</p>}
+      {/* 🎨 일러스트 안내 */}
+      <div style={{ textAlign: "center", marginTop: "40px", marginBottom: "24px" }}>
+        <img
+          src={mainImage}
+          alt="메인 일러스트"
+          style={{ width: "180px", opacity: 0.9 }}
+        />
+        <p style={{ fontSize: "1.1rem", color: "#555", marginTop: "12px" }}>
+          분실물을 찾고 있나요?
+        </p>
+        <p style={{ color: "#888" }}>아래 공지사항을 꼭 확인해주세요!</p>
+      </div>
 
-        {!loading && posts.map((post) => (
-          <div
-            className="card"
-            key={post.id}
-            onClick={() => navigate(`/found/${post.id}`)}
-            style={{ cursor: "pointer" }}
-          >
-            <h3 style={{ margin: 0, color: "#263238" }}>{post.title}</h3>
-            <p className="meta">📍 {post.location}</p>
-            <p className="meta">🗓️ {new Date(post.date).toLocaleDateString("ko-KR")}</p>
+      {/* 📢 공지사항 카드들 */}
+      <div style={{ padding: "0 16px" }}>
+        <h2 style={{ fontSize: "1.2rem", marginBottom: "12px", color: "#009688" }}>
+          📢 공지사항
+        </h2>
+
+        {loading && <p>불러오는 중...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {notices.length === 0 && !loading && (
+          <p style={{ color: "#888" }}>등록된 공지사항이 없습니다.</p>
+        )}
+
+        {notices.map((notice) => (
+          <div key={notice.id} className="notice-card">
+            <div className="notice-title">{notice.title}</div>
+            <div className="notice-content">{notice.content}</div>
+            <div className="notice-date">
+              📅 {new Date(notice.created_at).toLocaleDateString("ko-KR")}
+            </div>
           </div>
         ))}
-      </section>
+      </div>
     </div>
   );
 }

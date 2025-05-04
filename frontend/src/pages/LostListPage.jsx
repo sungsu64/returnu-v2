@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./spinner.css"; // 스피너 CSS
-import emptyImage from "./assets/empty.png"; // ❗ 귀여운 일러스트 이미지 추가
+import "./spinner.css";
+import emptyImage from "./assets/empty.png";
 
 export default function LostListPage() {
   const navigate = useNavigate();
@@ -98,11 +98,29 @@ export default function LostListPage() {
                 cursor: "pointer",
                 opacity: item.claimed_by ? 0.6 : 1,
                 backgroundColor: item.claimed_by ? "#f0f0f0" : "white",
+                marginBottom: "16px",
               }}
             >
+              {/* ✅ 썸네일 이미지 */}
+              {item.image && (
+                <img
+                  src={`http://localhost:8090${item.image}`}
+                  alt="분실물 썸네일"
+                  style={{
+                    width: "100%",
+                    height: "160px",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                    marginBottom: "8px",
+                  }}
+                />
+              )}
+
               <h3 style={{ margin: 0, color: "#263238" }}>
                 {item.title}{" "}
-                {item.claimed_by && <span style={{ color: "#009688", fontSize: "0.8rem" }}>✅ 수령완료</span>}
+                {item.claimed_by && (
+                  <span style={{ color: "#009688", fontSize: "0.8rem" }}>✅ 수령완료</span>
+                )}
               </h3>
               <p className="meta">📍 {item.location}</p>
               <p className="meta">🗓️ {item.date}</p>

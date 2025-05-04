@@ -8,9 +8,10 @@ import LostCreatePage from "./pages/LostCreatePage";
 import FoundDetailPage from "./pages/FoundDetailPage";
 import ClaimPage from "./pages/ClaimPage";
 import MyPage from "./pages/MyPage"; // ✅ 내 정보 페이지 추가
-
 import NavBar from "./components/NavBar"; // 하단 내비게이션 바
 import "./mobile-ui.css";
+import LoginPage from "./pages/LoginPage"; // ✅ 로그인 페이지 import 추가
+
 
 function App() {
   return (
@@ -23,6 +24,8 @@ function App() {
           <Route path="/found/:id" element={<FoundDetailPage />} />
           <Route path="/claim/:id" element={<ClaimPage />} />
           <Route path="/my" element={<MyPage />} /> {/* ✅ 내 정보 라우트 추가 */}
+          <Route path="/login" element={<LoginPage />} />
+          
         </Routes>
 
         <NavBar /> {/* 하단 네비게이션 */}

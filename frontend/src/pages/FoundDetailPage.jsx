@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export default function FoundDetailPage() {
   const { id } = useParams();
-  const navigate = useNavigate();
 
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,29 +34,23 @@ export default function FoundDetailPage() {
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {item && (
-        <>
-          <div className="card">
-            {item.image && (
-              <img
-                src={`http://localhost:8090${item.image}`}
-                alt="분실물 이미지"
-                style={{ width: "100%", borderRadius: "8px", marginBottom: "12px" }}
-              />
-            )}
-            <h2 style={{ color: "#607d8b", marginBottom: "8px" }}>{item.title}</h2>
-            <p className="meta">📍 위치: {item.location}</p>
-            <p className="meta">
-              🗓️ 습득일: {new Date(item.date).toLocaleDateString("ko-KR")}
-            </p>
-            <p style={{ marginTop: "12px", fontSize: "0.95rem", color: "#444" }}>
-              {item.description}
-            </p>
-          </div>
-
-          <button className="btn-primary" onClick={() => navigate(`/claim/${id}`)}>
-            ✅ 수령하러 가기
-          </button>
-        </>
+        <div className="card">
+          {item.image && (
+            <img
+              src={`http://localhost:8090${item.image}`}
+              alt="분실물 이미지"
+              style={{ width: "100%", borderRadius: "8px", marginBottom: "12px" }}
+            />
+          )}
+          <h2 style={{ color: "#607d8b", marginBottom: "8px" }}>{item.title}</h2>
+          <p className="meta">📍 위치: {item.location}</p>
+          <p className="meta">
+            🗓️ 습득일: {new Date(item.date).toLocaleDateString("ko-KR")}
+          </p>
+          <p style={{ marginTop: "12px", fontSize: "0.95rem", color: "#444" }}>
+            {item.description}
+          </p>
+        </div>
       )}
     </div>
   );
