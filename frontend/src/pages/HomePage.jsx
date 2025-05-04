@@ -50,8 +50,8 @@ export default function HomePage() {
 
   return (
     <div className="app-wrapper">
-      <h1 className="title">📦 ReturnU</h1>
-      <p style={{ textAlign: "center", color: "#607d8b", marginBottom: "24px" }}>학교 분실물 검색 서비스</p>
+      <h1 className="title">🧸 ReturnU</h1>
+      <p style={{ textAlign: "center", color: "#607d8b", marginBottom: "24px" }}>연성대학교 분실물 검색 서비스</p>
 
       {/* 🔍 검색창 */}
       <form onSubmit={handleSearch} style={{ maxWidth: "90%", margin: "0 auto" }}>
