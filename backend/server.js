@@ -13,6 +13,7 @@ app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname, "../frontend/build")));
 
+// ✅ MySQL 연결
 const connection = mysql.createConnection({
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "root",
@@ -22,12 +23,13 @@ const connection = mysql.createConnection({
 
 connection.connect((err) => {
   if (err) {
-    console.error("\u274C MySQL \uc5f0\uacb0 \uc2e4\ud328:", err);
+    console.error("❌ MySQL 연결 실패:", err);
     return;
   }
-  console.log("\u2705 MySQL \uc5f0\uacb0 \uc131\uacf5!");
+  console.log("✅ MySQL 연결 성공!");
 });
 
+// ✅ 이미지 업로드 설정
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
@@ -37,30 +39,34 @@ const storage = multer.diskStorage({
     cb(null, `${Date.now()}${ext}`);
   },
 });
-
 const upload = multer({ storage });
 
+/* -----------------------------------
+   📦 API 목록
+------------------------------------*/
+
+// 최근 등록된 분실물
 app.get("/api/lost-items", (req, res) => {
   const limit = parseInt(req.query.limit) || 4;
   const query = `
     SELECT id, title, location, date, description, image, claimed_by
     FROM lost_items
     WHERE claimed_by IS NULL OR claimed_by = ''
-    ORDER BY id DESC
-    LIMIT ?
+    ORDER BY id DESC LIMIT ?
   `;
   connection.query(query, [limit], (err, results) => {
-    if (err) return res.status(500).send("\uc11c\ubc84 \uc5d0\ub7ec");
+    if (err) return res.status(500).send("서버 에러");
     res.json(results);
   });
 });
 
+// 분실물 등록
 app.post("/api/lost-items", upload.single("image"), (req, res) => {
   const { title, location, date, description, category } = req.body;
   const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
   if (!title || !location || !date || !category) {
-    return res.status(400).json({ error: "\ud544\uc218 \ud56d\ubaa9\uc774 \ub204\ub77d\ub418\uc5c8\uc2b5\ub2c8\ub2e4." });
+    return res.status(400).json({ error: "필수 항목이 누락되었습니다." });
   }
 
   const sql = `
@@ -70,16 +76,17 @@ app.post("/api/lost-items", upload.single("image"), (req, res) => {
   const values = [title, location, date, description, category, imagePath];
 
   connection.query(sql, values, (err, result) => {
-    if (err) return res.status(500).json({ error: "\uc11c\ubc84 \uc624\ub958" });
-    res.status(201).json({ message: "\ub4f1\ub85d \uc131\uacf5", id: result.insertId });
+    if (err) return res.status(500).json({ error: "서버 오류" });
+    res.status(201).json({ message: "등록 성공", id: result.insertId });
   });
 });
 
+// 검색 + 필터
 app.get("/api/lost-items/search", (req, res) => {
   const query = req.query.query || "";
   const cat = req.query.cat || "전체";
-  const order = req.query.order === "asc" ? "ASC" : "DESC";
   const status = req.query.status || "전체";
+  const order = req.query.order === "asc" ? "ASC" : "DESC";
 
   const likeQuery = `%${query}%`;
   let sql = `
@@ -103,55 +110,59 @@ app.get("/api/lost-items/search", (req, res) => {
   sql += ` ORDER BY date ${order}`;
 
   connection.query(sql, values, (err, results) => {
-    if (err) return res.status(500).send("\uc11c\ubc84 \uc5d0\ub7ec");
-    if (results.length === 0) return res.status(404).send("\ub370\uc774\ud130 \uc5c6\uc74c");
+    if (err) return res.status(500).send("서버 에러");
+    if (results.length === 0) return res.status(404).send("데이터 없음");
     res.json(results);
   });
 });
 
+// 분실물 상세
 app.get("/api/lost-items/:id", (req, res) => {
   const { id } = req.params;
   const query = `
     SELECT id, title, location, date, description, image, claimed_by,
            IFNULL(created_at, NOW()) as created_at
-    FROM lost_items
-    WHERE id = ?
+    FROM lost_items WHERE id = ?
   `;
   connection.query(query, [id], (err, results) => {
-    if (err) return res.status(500).send("\uc11c\ubc84 \uc5d0\ub7ec");
-    if (results.length === 0) return res.status(404).send("\ub370\uc774\ud130 \uc5c6\uc74c");
+    if (err) return res.status(500).send("서버 에러");
+    if (results.length === 0) return res.status(404).send("데이터 없음");
     res.json(results[0]);
   });
 });
 
+// ✅ 수령 처리 (입력된 이름이 수령자 이름으로 저장됨)
 app.post("/api/lost-items/claim/:id", (req, res) => {
   const { id } = req.params;
-  const { claimed_by } = req.body;
+  const { claimed_by } = req.body;  // 여기에는 수령자 이름이 들어감
+
   const query = `
     UPDATE lost_items
     SET claimed_by = ?, claimed_at = NOW()
     WHERE id = ?
   `;
   connection.query(query, [claimed_by, id], (err) => {
-    if (err) return res.status(500).send("\uc11c\ubc84 \uc5d0\ub7ec");
-    res.status(200).json({ message: "\uc218\ub839 \ucc98\ub9ac \uc644\ub8cc" });
+    if (err) return res.status(500).send("서버 에러");
+    res.status(200).json({ message: "수령 처리 완료" });
   });
 });
 
+// 분실물 삭제
 app.delete("/api/lost-items/:id", (req, res) => {
   const { id } = req.params;
   const query = `DELETE FROM lost_items WHERE id = ?`;
   connection.query(query, [id], (err, result) => {
-    if (err) return res.status(500).send("\uc11c\ubc84 \uc5d0\ub7ec");
-    if (result.affectedRows === 0) return res.status(404).send("\ub370\uc774\ud130 \uc5c6\uc74c");
-    res.status(200).json({ message: "\uc0ad\uc81c \uc644\ub8cc" });
+    if (err) return res.status(500).send("서버 에러");
+    if (result.affectedRows === 0) return res.status(404).send("데이터 없음");
+    res.status(200).json({ message: "삭제 완료" });
   });
 });
 
+// 로그인
 app.post("/api/login", (req, res) => {
   const { student_id, password } = req.body;
   if (!student_id || !password) {
-    return res.status(400).json({ error: "\ud559\ubc88\uacfc \ube44\ubc00\ubc88\ud638\ub97c \uc785\ub825\ud574\uc8fc\uc138\uc694." });
+    return res.status(400).json({ error: "학번과 비밀번호를 입력해주세요." });
   }
 
   const query = `
@@ -159,28 +170,30 @@ app.post("/api/login", (req, res) => {
     FROM users
     WHERE student_id = ? AND password = ?
   `;
-
   connection.query(query, [student_id, password], (err, results) => {
-    if (err) return res.status(500).json({ error: "\uc11c\ubc84 \uc624\ub958" });
+    if (err) return res.status(500).json({ error: "서버 오류" });
     if (results.length === 0) {
-      return res.status(401).json({ error: "\ud559\ubc88 \ub610\ub294 \ube44\ubc00\ubc88\ud638\uac00 \uc77c\uce58\ud558\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4." });
+      return res.status(401).json({ error: "학번 또는 비밀번호가 일치하지 않습니다." });
     }
     res.json({ user: results[0] });
   });
 });
 
+// 공지사항
 app.get("/api/notices", (req, res) => {
-  const query = "SELECT id, title, content, created_at FROM notices ORDER BY created_at DESC";
+  const query = `SELECT id, title, content, created_at FROM notices ORDER BY created_at DESC`;
   connection.query(query, (err, results) => {
-    if (err) return res.status(500).send("\uc11c\ubc84 \uc5d0\ub7ec");
+    if (err) return res.status(500).send("서버 에러");
     res.json(results);
   });
 });
 
+// 정적 React 라우팅 처리
 app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/build/index.html"));
 });
 
+// 서버 실행
 app.listen(port, () => {
-  console.log(`\ud83d\ude80 \uc11c\ubc84 \uc2e4\ud589 \uc911: http://localhost:${port}`);
+  console.log(`🚀 서버 실행 중: http://localhost:${port}`);
 });

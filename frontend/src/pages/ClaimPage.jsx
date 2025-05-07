@@ -29,7 +29,7 @@ export default function ClaimPage() {
     }
   };
 
-  return (
+  return (  
     <>
       <h1 className="title">수령자 정보 입력</h1>
 

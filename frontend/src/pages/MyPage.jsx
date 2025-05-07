@@ -40,9 +40,10 @@ export default function MyPage() {
   const handleClaim = async () => {
     const id = prompt("수령 처리할 분실물 ID를 입력하세요:");
     if (!id) return;
-
-    const claimed_by = user?.name;
-
+  
+    const claimed_by = prompt("수령자 이름을 입력하세요:");
+    if (!claimed_by) return;
+  
     try {
       const res = await fetch(`http://localhost:8090/api/lost-items/claim/${id}`, {
         method: "POST",
@@ -55,6 +56,7 @@ export default function MyPage() {
       alert("❌ 에러: " + err.message);
     }
   };
+  
 
   return (
     <div className="app-wrapper">

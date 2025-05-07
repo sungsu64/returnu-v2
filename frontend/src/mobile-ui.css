@@ -153,3 +153,10 @@ body {
   margin-top: 8px;
 }
 
+.input-label {
+  font-weight: bold;
+  font-size: 0.92rem;
+  margin: 10px 0 4px;
+  display: block;
+  color: #5d4037;
+}
