@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import mainImage from "./assets/main_illustration.png"; // 메인용 일러스트 이미지
-import "../mobile-ui.css";
+import mainImage from "./assets/main_illustration.png";
+import NoticeSlider from "../components/NoticeSlider";
+import "../styles/HomePage.css";
 
 const CATEGORY_LIST = ["전체", "지갑", "휴대폰", "노트북", "이어폰", "열쇠", "기타"];
 
@@ -50,13 +51,10 @@ export default function HomePage() {
 
   return (
     <div className="app-wrapper">
-      <h1 className="title">🧸 ReturnU</h1>
-      <p style={{ textAlign: "center", color: "#607d8b", marginBottom: "24px" }}>연성대학교 분실물 검색 서비스</p>
+      {notices.length > 0 && <NoticeSlider notices={notices} />}
 
-      {/* 🔍 검색창 */}
       <form onSubmit={handleSearch} style={{ maxWidth: "90%", margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
-          {/* 카테고리 드롭다운 */}
           <div
             ref={catRef}
             style={{
@@ -108,7 +106,6 @@ export default function HomePage() {
             )}
           </div>
 
-          {/* 검색 입력창 */}
           <div style={{ position: "relative", flex: 1, height: "48px" }}>
             <input
               type="text"
@@ -145,40 +142,32 @@ export default function HomePage() {
         </div>
       </form>
 
-      {/* 🎨 일러스트 안내 */}
-      <div style={{ textAlign: "center", marginTop: "40px", marginBottom: "24px" }}>
-        <img
-          src={mainImage}
-          alt="메인 일러스트"
-          style={{ width: "180px", opacity: 0.9 }}
-        />
-        <p style={{ fontSize: "1.1rem", color: "#555", marginTop: "12px" }}>
-          분실물을 찾고 있나요?
-        </p>
-        <p style={{ color: "#888" }}>아래 공지사항을 꼭 확인해주세요!</p>
+      <div className="home-illustration">
+        <img src={mainImage} alt="메인 일러스트" className="main-image" />
+        <p className="guide-text">분실물을 찾고 있나요?</p>
+        <p className="sub-guide-text">아래에서 사용법과 주요 정보를 확인해보세요!</p>
       </div>
 
-      {/* 📢 공지사항 카드들 */}
-      <div style={{ padding: "0 16px" }}>
-        <h2 style={{ fontSize: "1.2rem", marginBottom: "12px", color: "#009688" }}>
-          📢 공지사항
-        </h2>
+      {/* 🧭 사용 가이드 카드 */}
+      <div className="usage-guide-box">
+        🧭 <strong>ReturnU 사용 가이드</strong><br />
+        🔍 <strong>검색창에</strong> 분실물을 검색해보세요.<br />
+        ➕ 버튼을 누르면 <strong>분실물·습득물 등록</strong>도 할 수 있어요!
+      </div>
 
-        {loading && <p>불러오는 중...</p>}
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {notices.length === 0 && !loading && (
-          <p style={{ color: "#888" }}>등록된 공지사항이 없습니다.</p>
-        )}
-
-        {notices.map((notice) => (
-          <div key={notice.id} className="notice-card">
-            <div className="notice-title">{notice.title}</div>
-            <div className="notice-content">{notice.content}</div>
-            <div className="notice-date">
-              📅 {new Date(notice.created_at).toLocaleDateString("ko-KR")}
-            </div>
-          </div>
-        ))}
+      {/* 📚 하단 정보 카드들 */}
+      <div className="home-extra-info">
+        <div className="info-card">
+          <p className="info-title">❓ 자주 묻는 질문</p>
+          <p className="info-desc">
+            <strong>Q. 물건을 주웠는데 어떻게 하나요?</strong><br />
+            👉 학생지원팀(학생회관 1층)으로 제출해주세요.<br /><br />
+            <strong>Q. 찾으러 가면 뭘 가져가야 하나요?</strong><br />
+            👉 본인 확인 가능한 신분증이 필요해요.<br /><br />
+            <strong>Q. 분실물은 얼마나 보관되나요?</strong><br />
+            👉 최대 2주까지 보관되며 이후 폐기됩니다.
+          </p>
+        </div>
       </div>
     </div>
   );

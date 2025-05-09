@@ -1,0 +1,117 @@
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 64px;
+  background-color: white;
+  border-top: 1px solid #eee;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.nav-item {
+  text-align: center;
+  font-size: 14px;
+  color: #d2691e;
+  text-decoration: none;
+}
+
+.nav-item.active {
+  color: #ff7043;
+}
+
+.fab-fixed-area {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fab-button {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #ff7043;
+  color: white;
+  font-size: 28px;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.fab-menu {
+  margin-top: -12px;
+  display: flex;
+  gap: 12px;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 11;
+}
+
+.fab-menu button {
+  white-space: nowrap;
+  font-size: 14px;
+  border: none;
+  background: #f5f5f5;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #333;
+  transition: background 0.2s;
+}
+
+.fab-menu button:hover {
+  background: #e0f7fa;
+}
+
+.popup-menu {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: row; /* 👈 좌우 정렬 */
+  gap: 12px;
+  z-index: 10;
+  animation: fadeInPop 0.2s ease-out;
+}
+
+.popup-menu button {
+  white-space: nowrap;
+  font-size: 14px;
+  border: none;
+  background: #f8f9fa;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #333;
+  transition: background 0.2s;
+}
+
+.popup-menu button:hover {
+  background: #e0f7fa;
+}
+
+@keyframes fadeInPop {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}

@@ -1,3 +1,4 @@
+// express 서버 설정 관련 모듈들 불러오기
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2");
@@ -6,14 +7,15 @@ const path = require("path");
 require("dotenv").config();
 
 const app = express();
-const port = process.env.PORT || 8090;
+const port = process.env.PORT || 8090; // 포트번호 (환경변수 없으면 기본값 8090)
 
-app.use(cors());
-app.use(express.json());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(express.static(path.join(__dirname, "../frontend/build")));
+// 공통 미들웨어 설정
+app.use(cors()); // CORS 허용
+app.use(express.json()); // JSON 본문 파싱
+app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // 업로드된 이미지 접근 허용
+app.use(express.static(path.join(__dirname, "../frontend/build"))); // React 앱 정적 파일 서빙
 
-// ✅ MySQL 연결
+// MySQL 데이터베이스 연결 설정
 const connection = mysql.createConnection({
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "root",
@@ -29,23 +31,21 @@ connection.connect((err) => {
   console.log("✅ MySQL 연결 성공!");
 });
 
-// ✅ 이미지 업로드 설정
+// 이미지 파일 저장 설정 (multer)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/");
+    cb(null, "uploads/"); // 저장 경로
   },
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `${Date.now()}${ext}`);
+    const ext = path.extname(file.originalname); // 확장자 추출
+    cb(null, `${Date.now()}${ext}`); // 파일명: 현재시간.확장자
   },
 });
-const upload = multer({ storage });
+const upload = multer({ storage }); // multer 객체 생성
 
-/* -----------------------------------
-   📦 API 목록
-------------------------------------*/
+// 🔽 API 라우터 시작 🔽
 
-// 최근 등록된 분실물
+// 최근 분실물 4개 조회
 app.get("/api/lost-items", (req, res) => {
   const limit = parseInt(req.query.limit) || 4;
   const query = `
@@ -60,7 +60,7 @@ app.get("/api/lost-items", (req, res) => {
   });
 });
 
-// 분실물 등록
+// 분실물 등록 (이미지 포함)
 app.post("/api/lost-items", upload.single("image"), (req, res) => {
   const { title, location, date, description, category } = req.body;
   const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
@@ -81,7 +81,7 @@ app.post("/api/lost-items", upload.single("image"), (req, res) => {
   });
 });
 
-// 검색 + 필터
+// 분실물 검색
 app.get("/api/lost-items/search", (req, res) => {
   const query = req.query.query || "";
   const cat = req.query.cat || "전체";
@@ -116,7 +116,7 @@ app.get("/api/lost-items/search", (req, res) => {
   });
 });
 
-// 분실물 상세
+// 분실물 상세 조회
 app.get("/api/lost-items/:id", (req, res) => {
   const { id } = req.params;
   const query = `
@@ -131,7 +131,7 @@ app.get("/api/lost-items/:id", (req, res) => {
   });
 });
 
-// ✅ 수령 처리 (입력된 이름이 수령자 이름으로 저장됨)
+// 분실물 수령 처리
 app.post("/api/lost-items/claim/:id", (req, res) => {
   const { id } = req.params;
   const { claimed_by } = req.body;  // 여기에는 수령자 이름이 들어감
@@ -158,7 +158,7 @@ app.delete("/api/lost-items/:id", (req, res) => {
   });
 });
 
-// 로그인
+// 로그인 처리
 app.post("/api/login", (req, res) => {
   const { student_id, password } = req.body;
   if (!student_id || !password) {
@@ -179,7 +179,7 @@ app.post("/api/login", (req, res) => {
   });
 });
 
-// 공지사항
+// 공지사항 조회
 app.get("/api/notices", (req, res) => {
   const query = `SELECT id, title, content, created_at FROM notices ORDER BY created_at DESC`;
   connection.query(query, (err, results) => {
@@ -188,12 +188,12 @@ app.get("/api/notices", (req, res) => {
   });
 });
 
-// 정적 React 라우팅 처리
+// React 앱 나머지 경로 처리 (SPA 라우팅용)
 app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/build/index.html"));
 });
 
-// 서버 실행
+// 서버 실행 시작
 app.listen(port, () => {
   console.log(`🚀 서버 실행 중: http://localhost:${port}`);
 });

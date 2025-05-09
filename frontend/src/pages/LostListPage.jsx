@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./spinner.css";
+import "../styles/NavBar.css";
 import emptyImage from "./assets/empty.png";
 
 export default function LostListPage() {

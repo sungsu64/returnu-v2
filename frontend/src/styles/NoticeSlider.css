@@ -1,0 +1,24 @@
+.notice-slider {
+  background: #f0f4f8; /* 더 부드러운 회청색 계열 */
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin: 24px 16px;
+  text-align: center;
+  font-size: 1rem;
+  color: #37474f; /* 딥그레이톤 텍스트 */
+  font-weight: bold;
+  animation: fadeIn 0.4s ease;
+  word-break: keep-all;
+  white-space: normal;
+  line-height: 1.5;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.notice-content {
+  font-weight: normal;
+  font-size: 0.9rem;
+  display: block;
+  margin-top: 4px;
+  color: #455a64;
+}
+
