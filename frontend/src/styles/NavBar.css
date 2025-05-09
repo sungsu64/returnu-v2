@@ -1,110 +1,97 @@
+/* 하단 내비게이션 */
 .bottom-nav {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  height: 64px;
-  background-color: white;
-  border-top: 1px solid #eee;
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 1;
+  height: 64px;
+  background: var(--color-bg-app);
+  display: flex;
+  justify-content: space-evenly; /* ✅ 균등 정렬로 바꿈 */
+  align-items: center;
+  z-index: 100;
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .nav-item {
+  flex: 1;
   text-align: center;
-  font-size: 14px;
-  color: #d2691e;
+  font-size: 0.75rem;
+  color: var(--color-muted);
   text-decoration: none;
+  padding-top: 4px;
 }
 
 .nav-item.active {
-  color: #ff7043;
+  color: var(--color-primary);
+  font-weight: bold;
 }
 
+/* 가운데 플로팅 버튼 영역 */
 .fab-fixed-area {
   position: fixed;
-  bottom: 32px;
+  bottom: 7px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  z-index: 200;
 }
 
+
+/* 플로팅 + 버튼 */
 .fab-button {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background-color: #ff7043;
+  background: var(--color-primary);
   color: white;
   font-size: 28px;
   border: none;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
 
-.fab-menu {
-  margin-top: -12px;
-  display: flex;
-  gap: 12px;
-  background: white;
-  padding: 8px 12px;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  z-index: 11;
+.fab-button:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
 }
 
-.fab-menu button {
-  white-space: nowrap;
-  font-size: 14px;
-  border: none;
-  background: #f5f5f5;
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  color: #333;
-  transition: background 0.2s;
-}
-
-.fab-menu button:hover {
-  background: #e0f7fa;
-}
-
+/* 팝업 메뉴 */
 .popup-menu {
   position: absolute;
-  bottom: 60px;
+  bottom: 70px;
   left: 50%;
   transform: translateX(-50%);
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  padding: 10px 14px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: 12px 16px;
   display: flex;
-  flex-direction: row; /* 👈 좌우 정렬 */
-  gap: 12px;
-  z-index: 10;
+  flex-direction: row;
+  gap: 16px;
+  z-index: 111;
   animation: fadeInPop 0.2s ease-out;
 }
 
 .popup-menu button {
   white-space: nowrap;
   font-size: 14px;
+  font-weight: 500;
   border: none;
-  background: #f8f9fa;
+  background: #f1f1f1;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   color: #333;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.1s;
 }
 
 .popup-menu button:hover {
-  background: #e0f7fa;
+  background: #d0f4f4;
+  transform: scale(1.05);
 }
 
+/* 팝업 애니메이션 */
 @keyframes fadeInPop {
   from {
     opacity: 0;

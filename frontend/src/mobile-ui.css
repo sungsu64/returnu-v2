@@ -7,21 +7,21 @@
   --color-bg-app: #ffffff;
   --color-text: #4e342e;           /* 브라운톤 텍스트 */
   --color-muted: #bf360c;
-  
+  --color-border: #ddd;
 }
 
-body {
+html, body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  height: 100%;
   font-family: 'Apple SD Gothic Neo', sans-serif;
   background: var(--color-bg-desktop);
-  height: 100vh;
-  width: 100vw;
   overflow-x: hidden;
 }
 
 #root {
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
 }
 
@@ -30,8 +30,7 @@ body {
   min-height: 100vh;
   background: var(--color-bg-app);
   box-sizing: border-box;
-  padding: 0;
-  padding-bottom: 64px;
+  padding-bottom: 64px; /* 하단 내비바 가리지 않게 */
 }
 
 @media (min-width: 768px) {
@@ -45,6 +44,7 @@ body {
   }
 }
 
+/* 버튼 스타일 */
 .btn-primary {
   width: 100%;
   padding: 16px 0;
@@ -57,10 +57,12 @@ body {
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
+
 .btn-primary:hover {
   background-color: var(--color-primary-dark);
 }
 
+/* 카드 박스 */
 .card {
   width: 100%;
   padding: 16px;
@@ -71,6 +73,7 @@ body {
   margin: 16px 0;
 }
 
+/* 제목 */
 .title {
   font-size: 1.4rem;
   font-weight: bold;
@@ -79,6 +82,7 @@ body {
   text-align: center;
 }
 
+/* 입력창 */
 .input {
   width: 100%;
   padding: 14px;
@@ -90,20 +94,24 @@ body {
   background: #fff3e0;
 }
 
+/* 하단 내비게이션 바 */
 .bottom-nav {
   position: fixed;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
-  max-width: 480px;
+  left: 0;
+  right: 0;
+  width: 100%;
   height: 56px;
   background: var(--color-bg-app);
   border-top: 1px solid var(--color-border);
   display: flex;
-  box-shadow: 0 -2px 6px rgba(0,0,0,0.06);
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.06);
+  z-index: 100;
 }
 
+/* 내비게이션 아이템 */
 .nav-item {
   flex: 1;
   text-align: center;
@@ -119,6 +127,7 @@ body {
   font-weight: bold;
 }
 
+/* 공지 카드 */
 .notice-card {
   background: #fff7f0;
   border-left: 6px solid var(--color-primary);
@@ -153,6 +162,7 @@ body {
   margin-top: 8px;
 }
 
+/* 라벨 */
 .input-label {
   font-weight: bold;
   font-size: 0.92rem;

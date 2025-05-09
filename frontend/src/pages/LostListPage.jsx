@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "../styles/NavBar.css";
+import "../styles/LostListPage.css";
 import emptyImage from "./assets/empty.png";
 
 export default function LostListPage() {
@@ -17,6 +17,32 @@ export default function LostListPage() {
   const query = queryParams.get("query") || "";
   const cat = queryParams.get("cat") || "전체";
 
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "short"
+    });
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
+    try {
+      const res = await fetch(`http://localhost:8090/api/lost-items/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("삭제 실패");
+      alert("삭제 완료!");
+      window.location.reload();
+    } catch (err) {
+      alert("에러 발생: " + err.message);
+    }
+  };
+
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
@@ -24,9 +50,7 @@ export default function LostListPage() {
       try {
         const catParam = cat === "전체" ? "" : `&cat=${encodeURIComponent(cat)}`;
         const statusParam = status === "전체" ? "" : `&status=${encodeURIComponent(status)}`;
-        const url = `http://localhost:8090/api/lost-items/search?query=${encodeURIComponent(
-          query
-        )}${catParam}${statusParam}&order=${order}`;
+        const url = `http://localhost:8090/api/lost-items/search?query=${encodeURIComponent(query)}${catParam}${statusParam}&order=${order}`;
 
         const res = await fetch(url);
         if (!res.ok) throw new Error("목록을 불러올 수 없습니다.");
@@ -38,95 +62,57 @@ export default function LostListPage() {
         setLoading(false);
       }
     }
+
     fetchData();
   }, [query, cat, order, status]);
 
   return (
-    <div className="app-wrapper">
-      <h1 className="title">분실물 목록</h1>
+    <div className="lost-list-wrapper">
+      <h1 className="lost-list-title">📦 분실물 목록</h1>
 
-      <div style={{ padding: "0 16px" }}>
-        <div
-          style={{
-            marginBottom: "12px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <select
-            value={order}
-            onChange={(e) => setOrder(e.target.value)}
-            style={{ padding: "6px", fontSize: "0.9rem" }}
-          >
-            <option value="desc">📅 최신순</option>
-            <option value="asc">📆 오래된순</option>
-          </select>
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            style={{ padding: "6px", fontSize: "0.9rem" }}
-          >
-            <option value="전체">📦 전체</option>
-            <option value="미수령">📭 미수령</option>
-            <option value="수령완료">✅ 수령완료</option>
-          </select>
-        </div>
-
-        {loading && (
-          <div className="spinner-container">
-            <div className="spinner"></div>
-          </div>
-        )}
-
-        {error && <p style={{ color: "red" }}>{error}</p>}
-
-        {!loading && items.length === 0 && (
-          <div style={{ textAlign: "center", marginTop: "32px" }}>
-            <img src={emptyImage} alt="결과 없음" style={{ width: "180px", opacity: 0.6 }} />
-            <p style={{ color: "#888", marginTop: "12px" }}>검색 결과가 없습니다.</p>
-          </div>
-        )}
-
-        {!loading &&
-          items.map((item) => (
-            <div
-              className="card"
-              key={item.id}
-              onClick={() => navigate(`/found/${item.id}`)}
-              style={{
-                cursor: "pointer",
-                opacity: item.claimed_by ? 0.6 : 1,
-                backgroundColor: item.claimed_by ? "#f0f0f0" : "white",
-                marginBottom: "16px",
-              }}
-            >
-              {/* ✅ 썸네일 이미지 */}
-              {item.image && (
-                <img
-                  src={`http://localhost:8090${item.image}`}
-                  alt="분실물 썸네일"
-                  style={{
-                    width: "100%",
-                    height: "160px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                    marginBottom: "8px",
-                  }}
-                />
-              )}
-
-              <h3 style={{ margin: 0, color: "#263238" }}>
-                {item.title}{" "}
-                {item.claimed_by && (
-                  <span style={{ color: "#009688", fontSize: "0.8rem" }}>✅ 수령완료</span>
-                )}
-              </h3>
-              <p className="meta">📍 {item.location}</p>
-              <p className="meta">🗓️ {item.date}</p>
-            </div>
-          ))}
+      <div className="lost-list-filters">
+        <select value={order} onChange={(e) => setOrder(e.target.value)}>
+          <option value="desc">📅 최신순</option>
+          <option value="asc">📆 오래된순</option>
+        </select>
+        <select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <option value="전체">📦 전체</option>
+          <option value="미수령">📭 미수령</option>
+          <option value="수령완료">✅ 수령완료</option>
+        </select>
       </div>
+
+      {loading && (
+        <div className="spinner-container"><div className="spinner"></div></div>
+      )}
+      {error && <p className="lost-list-error">{error}</p>}
+
+      {!loading && items.length === 0 && (
+        <div className="lost-list-empty">
+          <img src={emptyImage} alt="결과 없음" />
+          <p>검색 결과가 없습니다.</p>
+        </div>
+      )}
+
+      {!loading &&
+        items.map((item) => (
+          <div className="lost-item-card" key={item.id} onClick={() => navigate(`/found/${item.id}`)}>
+            <div className="thumbnail-box">
+              <img src={`http://localhost:8090${item.image}`} alt="썸네일" />
+            </div>
+            <div className="lost-item-body">
+              <h3>{item.title}</h3>
+              <p className="meta">📍 {item.location}</p>
+              <p className="meta">📅 {formatDate(item.date)}</p>
+            </div>
+            {user?.role === "admin" && (
+              <button className="delete-btn" onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(item.id);
+              }}>🗑 삭제</button>
+            )}
+          </div>
+        ))}
     </div>
   );
 }

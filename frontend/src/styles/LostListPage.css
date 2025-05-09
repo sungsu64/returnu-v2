@@ -1,0 +1,81 @@
+.lost-list-wrapper {
+    padding: 0 16px 80px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  
+  .lost-list-title {
+    text-align: center;
+    color: #2e7d32;
+    font-size: 1.5rem;
+    margin: 20px 0;
+  }
+  
+  .lost-list-filters {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  
+  .lost-item-card {
+    width: 100%;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    margin-bottom: 20px;
+    transition: transform 0.2s ease;
+  }
+  
+  .lost-item-card:hover {
+    transform: translateY(-6px);
+  }
+  
+  .thumbnail-box {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .thumbnail-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  
+  .lost-item-body {
+    padding: 16px;
+    background: linear-gradient(to bottom, #ffffff, #f9f9f9);
+  }
+  
+  .lost-item-body h3 {
+    font-size: 1.1rem;
+    color: #2e7d32;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+  
+  .meta {
+    font-size: 0.88rem;
+    color: #616161;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .delete-btn {
+    margin: 8px 16px 12px;
+    padding: 6px 12px;
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }

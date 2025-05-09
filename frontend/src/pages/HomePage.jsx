@@ -14,8 +14,8 @@ export default function HomePage() {
   const catRef = useRef();
 
   const [notices, setNotices] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [, setLoading] = useState(true);
+  const [, setError] = useState(null);
 
   useEffect(() => {
     const onClickOutside = (e) => {
@@ -145,17 +145,15 @@ export default function HomePage() {
       <div className="home-illustration">
         <img src={mainImage} alt="메인 일러스트" className="main-image" />
         <p className="guide-text">분실물을 찾고 있나요?</p>
-        <p className="sub-guide-text">아래에서 사용법과 주요 정보를 확인해보세요!</p>
+        <p className="sub-guide-text">아래 내용을 꼭 읽어주세요!!</p>
       </div>
 
-      {/* 🧭 사용 가이드 카드 */}
       <div className="usage-guide-box">
         🧭 <strong>ReturnU 사용 가이드</strong><br />
         🔍 <strong>검색창에</strong> 분실물을 검색해보세요.<br />
         ➕ 버튼을 누르면 <strong>분실물·습득물 등록</strong>도 할 수 있어요!
       </div>
 
-      {/* 📚 하단 정보 카드들 */}
       <div className="home-extra-info">
         <div className="info-card">
           <p className="info-title">❓ 자주 묻는 질문</p>

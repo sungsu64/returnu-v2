@@ -15,23 +15,23 @@ import LoginPage from "./pages/LoginPage"; // ✅ 로그인 페이지 import 추
 
 function App() {
   return (
-    <div className="app-wrapper">
-      <BrowserRouter>
+    <BrowserRouter>
+      <div className="app-wrapper">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/lost/list" element={<LostListPage />} />
           <Route path="/lost/create" element={<LostCreatePage />} />
           <Route path="/found/:id" element={<FoundDetailPage />} />
           <Route path="/claim/:id" element={<ClaimPage />} />
-          <Route path="/my" element={<MyPage />} /> {/* ✅ 내 정보 라우트 추가 */}
+          <Route path="/my" element={<MyPage />} />
           <Route path="/login" element={<LoginPage />} />
-          
         </Routes>
+      </div>
 
-        <NavBar /> {/* 하단 네비게이션 */}
-      </BrowserRouter>
-    </div>
+      <NavBar /> {/* ✅ app-wrapper 바깥으로 이동 */}
+    </BrowserRouter>
   );
 }
+
 
 export default App;

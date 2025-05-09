@@ -13,17 +13,10 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="bottom-nav">
-      <NavLink to="/" end className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-        🏠<br />홈
-      </NavLink>
-
-      <NavLink to="/lost/list" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-        📋<br />목록
-      </NavLink>
-
-      <div className="plus-popup-wrapper">
-        <button className="small-plus" onClick={toggleMenu}>＋</button>
+    <>
+      {/* 중앙 고정된 +버튼 */}
+      <div className="fab-fixed-area">
+        <button className="fab-button" onClick={toggleMenu}>＋</button>
         {menuOpen && (
           <div className="popup-menu">
             <button onClick={() => goTo("/lost/create")}>분실물 등록</button>
@@ -32,13 +25,26 @@ export default function NavBar() {
         )}
       </div>
 
-      <NavLink to="/lost/create" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-        ➕<br />등록
-      </NavLink>
+      {/* 하단 네비게이션 */}
+      <nav className="bottom-nav">
+        <NavLink to="/" end className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+          🏠<br />홈
+        </NavLink>
 
-      <NavLink to="/my" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-        👤<br />내정보
-      </NavLink>
-    </nav>
+        <NavLink to="/lost/list" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+          📋<br />목록
+        </NavLink>
+
+        <div className="nav-item spacer"></div> {/* 가운데 간격 확보용 */}
+
+        <NavLink to="/my" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+          👤<br />내정보
+        </NavLink>
+
+        <NavLink to="/login" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+          ⚙️<br />더보기
+        </NavLink>
+      </nav>
+    </>
   );
 }
