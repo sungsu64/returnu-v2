@@ -11,6 +11,8 @@ import MyPage from "./pages/MyPage"; // ✅ 내 정보 페이지 추가
 import NavBar from "./components/NavBar"; // 하단 내비게이션 바
 import "./mobile-ui.css";
 import LoginPage from "./pages/LoginPage"; // ✅ 로그인 페이지 import 추가
+import LostRequestPage from "./pages/LostRequestPage";
+import LostRequestListPage from "./pages/LostRequestListPage";
 
 
 function App() {
@@ -25,6 +27,8 @@ function App() {
           <Route path="/claim/:id" element={<ClaimPage />} />
           <Route path="/my" element={<MyPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/lost-request" element={<LostRequestPage />} />
+          <Route path="/requests" element={<LostRequestListPage />} />
         </Routes>
       </div>
 

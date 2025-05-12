@@ -16,7 +16,6 @@ export default function LostListPage() {
   const queryParams = new URLSearchParams(location.search);
   const query = queryParams.get("query") || "";
   const cat = queryParams.get("cat") || "전체";
-
   const user = JSON.parse(localStorage.getItem("user"));
 
   const formatDate = (dateString) => {
@@ -68,7 +67,7 @@ export default function LostListPage() {
 
   return (
     <div className="lost-list-wrapper">
-      <h1 className="lost-list-title">📦 분실물 목록</h1>
+      <h1 className="lost-list-title">📦물건을 찾아가세요!</h1>
 
       <div className="lost-list-filters">
         <select value={order} onChange={(e) => setOrder(e.target.value)}>
@@ -96,20 +95,32 @@ export default function LostListPage() {
 
       {!loading &&
         items.map((item) => (
-          <div className="lost-item-card" key={item.id} onClick={() => navigate(`/found/${item.id}`)}>
+          <div
+            className={`lost-item-card ${item.claimed_by ? "claimed" : ""}`}
+            key={item.id}
+            onClick={() => navigate(`/found/${item.id}`)}
+          >
             <div className="thumbnail-box">
               <img src={`http://localhost:8090${item.image}`} alt="썸네일" />
+              {item.claimed_by && (
+                <div className="claimed-badge">✅ 수령완료</div>
+              )}
             </div>
             <div className="lost-item-body">
-              <h3>{item.title}</h3>
+              <h3 className="lost-item-title">{item.title}</h3>
               <p className="meta">📍 {item.location}</p>
-              <p className="meta">📅 {formatDate(item.date)}</p>
+              <p className="meta">🗓 {formatDate(item.date)}</p>
             </div>
             {user?.role === "admin" && (
-              <button className="delete-btn" onClick={(e) => {
-                e.stopPropagation();
-                handleDelete(item.id);
-              }}>🗑 삭제</button>
+              <button
+                className="delete-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(item.id);
+                }}
+              >
+                🗑 삭제
+              </button>
             )}
           </div>
         ))}

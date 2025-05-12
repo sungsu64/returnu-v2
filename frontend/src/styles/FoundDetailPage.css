@@ -1,0 +1,95 @@
+/* FoundDetailPage.css */
+
+.found-detail-wrapper {
+  padding: 20px;
+  background-color: #fffdfc;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.found-detail-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.found-detail-image {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  margin-bottom: 16px;
+}
+
+.found-detail-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #37474f;
+  margin-bottom: 8px;
+}
+
+.found-detail-meta {
+  color: #607d8b;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+
+.found-detail-description {
+  color: #444;
+  font-size: 1rem;
+  margin-top: 14px;
+  line-height: 1.5;
+}
+
+.found-detail-status {
+  background: #e0f7fa;
+  color: #00695c;
+  font-weight: bold;
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-top: 12px;
+}
+
+.found-detail-created {
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 10px;
+}
+
+.found-detail-claim-input {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.found-detail-claim-input input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.found-detail-claim-button {
+  padding: 10px;
+  background-color: #ff8a65;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.found-detail-back {
+  margin-top: 24px;
+  padding: 10px;
+  background: #eee;
+  border-radius: 8px;
+  text-align: center;
+  color: #555;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+}

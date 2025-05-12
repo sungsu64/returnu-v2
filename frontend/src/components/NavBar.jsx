@@ -20,7 +20,7 @@ export default function NavBar() {
         {menuOpen && (
           <div className="popup-menu">
             <button onClick={() => goTo("/lost/create")}>분실물 등록</button>
-            <button onClick={() => goTo("/found/create")}>습득물 등록</button>
+            <button onClick={() => goTo("/lost-request")}>습득물 등록</button>
           </div>
         )}
       </div>
@@ -37,12 +37,12 @@ export default function NavBar() {
 
         <div className="nav-item spacer"></div> {/* 가운데 간격 확보용 */}
 
-        <NavLink to="/my" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-          👤<br />내정보
+        <NavLink to="/requests" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+          📮<br />요청글
         </NavLink>
 
-        <NavLink to="/login" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-          ⚙️<br />더보기
+        <NavLink to="/my" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+          👤<br />내정보
         </NavLink>
       </nav>
     </>

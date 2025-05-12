@@ -1,81 +1,162 @@
 .lost-list-wrapper {
-    padding: 0 16px 80px;
-    max-width: 480px;
-    margin: 0 auto;
-  }
-  
-  .lost-list-title {
-    text-align: center;
-    color: #2e7d32;
-    font-size: 1.5rem;
-    margin: 20px 0;
-  }
-  
-  .lost-list-filters {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-  
-  .lost-item-card {
-    width: 100%;
-    background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-    overflow: hidden;
-    margin-bottom: 20px;
-    transition: transform 0.2s ease;
-  }
-  
-  .lost-item-card:hover {
-    transform: translateY(-6px);
-  }
-  
-  .thumbnail-box {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    background: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .thumbnail-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  
-  .lost-item-body {
-    padding: 16px;
-    background: linear-gradient(to bottom, #ffffff, #f9f9f9);
-  }
-  
-  .lost-item-body h3 {
-    font-size: 1.1rem;
-    color: #2e7d32;
-    font-weight: bold;
-    margin-bottom: 6px;
-  }
-  
-  .meta {
-    font-size: 0.88rem;
-    color: #616161;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  
-  .delete-btn {
-    margin: 8px 16px 12px;
-    padding: 6px 12px;
-    background-color: #ff6b6b;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.85rem;
-  }
+  padding: 0 16px 80px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.lost-list-title {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #2e7d32;
+  margin: 24px 0 16px;
+}
+
+.lost-list-filters {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.lost-list-filters select {
+  flex: 1;
+  padding: 10px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  color: #333;
+}
+
+/* 카드 기본 */
+.lost-item-card {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  margin-bottom: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.lost-item-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* 수령완료 카드 */
+.lost-item-card.claimed {
+  opacity: 0.7;
+  filter: grayscale(0.15);
+  background: #f0f0f0;
+}
+
+/* 이미지 박스 */
+.thumbnail-box {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #f0f0f0;
+  position: relative;
+}
+
+.thumbnail-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 수령완료 강조 뱃지 */
+.claimed-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #ff7043;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 16px;
+  font-weight: bold;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 5;
+}
+
+/* 카드 본문 */
+.lost-item-body {
+  padding: 16px;
+  background: linear-gradient(to bottom, #ffffff, #f8f8f8);
+}
+
+.lost-item-title {
+  font-size: 1.1rem;
+  color: #263238;
+  font-weight: bold;
+  margin: 0 0 8px;
+  line-height: 1.3;
+}
+
+.meta {
+  font-size: 0.88rem;
+  color: #607d8b;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.delete-btn {
+  margin: 0 16px 16px;
+  padding: 6px 12px;
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s ease;
+}
+
+.delete-btn:hover {
+  background-color: #e53935;
+}
+
+.spinner-container {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #009688;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.lost-list-empty {
+  text-align: center;
+  padding: 40px 16px;
+  color: #9e9e9e;
+}
+
+.lost-list-empty img {
+  width: 140px;
+  opacity: 0.6;
+  margin-bottom: 16px;
+}
+
+.lost-list-error {
+  text-align: center;
+  color: red;
+  margin-top: 16px;
+}
