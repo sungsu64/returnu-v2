@@ -37,6 +37,34 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+// 🔽 분실물 요청 등록 API 추가
+app.post("/api/lost-requests", upload.single("image"), (req, res) => {
+  const {
+    title, date, location, description,
+    category, phone, email
+  } = req.body;
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+
+  if (!title || !date || !location || !description || (!phone && !email)) {
+    return res.status(400).json({ error: "필수 항목 누락" });
+  }
+
+  const sql = `
+    INSERT INTO lost_requests 
+    (title, date, location, description, category, phone, email, image)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+  const values = [title, date, location, description, category, phone, email, imagePath];
+
+  connection.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("❌ 분실물 요청 등록 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.status(201).json({ message: "요청 등록 성공", id: result.insertId });
+  });
+});
+
 // 🔽 분실물 API
 app.get("/api/lost-items", (req, res) => {
   const limit = parseInt(req.query.limit) || 4;
