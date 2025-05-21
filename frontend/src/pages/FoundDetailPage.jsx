@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "../styles/FoundDetailPage.css";
 
 export default function FoundDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const [item, setItem] = useState(null);
   const [claimedName, setClaimedName] = useState("");
   const [loading, setLoading] = useState(true);
@@ -53,6 +55,28 @@ export default function FoundDetailPage() {
 
   return (
     <div className="found-detail-wrapper">
+
+      {/* 🔙 상단 왼쪽 뒤로가기 */}
+      <div style={{
+        position: "relative",
+        width: "100%",
+        padding: "12px 16px 0",
+        boxSizing: "border-box"
+      }}>
+        <button
+          onClick={() => navigate(-1)}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#666",
+            fontSize: "1rem",
+            cursor: "pointer"
+          }}
+        >
+          ← 뒤로가기
+        </button>
+      </div>
+
       {loading && <p>로딩 중...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
@@ -81,6 +105,17 @@ export default function FoundDetailPage() {
           <p className="found-detail-description">{item.description}</p>
           <p className="found-detail-created">등록일: {new Date(item.created_at).toLocaleDateString("ko-KR")}</p>
 
+          {/* 📌 보관 안내 */}
+          <div style={{ marginTop: "20px", padding: "12px", border: "1px solid #eee", borderRadius: "8px", background: "#f9f9f9" }}>
+            <p style={{ marginBottom: "8px" }}>📌 <strong>보관 장소:</strong> 학생지원센터 1층 분실물 창구</p>
+            <p style={{ marginBottom: "8px" }}>
+              ⏳ <strong>보관 기한:</strong>{" "}
+              {new Date(new Date(item.created_at).getTime() + 14 * 86400000).toLocaleDateString("ko-KR")}
+            </p>
+            <p style={{ color: "#999", fontSize: "0.9rem" }}>📋 2주간 보관 후 폐기 예정입니다.</p>
+          </div>
+
+          {/* 관리자 수령 처리 */}
           {user?.role === "admin" && (
             <div className="found-detail-claim-input">
               <input
@@ -94,10 +129,6 @@ export default function FoundDetailPage() {
               </button>
             </div>
           )}
-
-          <button className="found-detail-back" onClick={() => window.history.back()}>
-            ← 뒤로가기
-          </button>
         </div>
       )}
     </div>

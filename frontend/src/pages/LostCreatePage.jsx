@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../mobile-ui.css";
 
 export default function LostCreatePage() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [form, setForm] = useState({
     title: "",
     location: "",
@@ -15,6 +16,16 @@ export default function LostCreatePage() {
   const [preview, setPreview] = useState(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      setUser(JSON.parse(stored));
+    } else {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -43,6 +54,11 @@ export default function LostCreatePage() {
       if (form[key]) formData.append(key, form[key]);
     }
 
+    // ✅ student_id는 별도로 직접 append (이게 핵심!)
+    if (user?.student_id) {
+      formData.append("student_id", user.student_id);
+    }
+
     try {
       setIsLoading(true);
       const res = await fetch("http://localhost:8090/api/lost-items", {
@@ -54,7 +70,7 @@ export default function LostCreatePage() {
       const result = await res.json();
 
       alert("분실물 등록 완료!");
-      navigate(`/found/${result.id}`); // ✅ 등록 후 상세 페이지 이동
+      navigate(`/found/${result.id}`);
     } catch (err) {
       alert("에러 발생: " + err.message);
     } finally {
@@ -91,16 +107,39 @@ export default function LostCreatePage() {
         )}
 
         <label className="input-label">물건 이름 *</label>
-        <input className="input" name="title" placeholder="예: 검정색 지갑" value={form.title} onChange={handleChange} />
+        <input
+          className="input"
+          name="title"
+          placeholder="예: 검정색 지갑"
+          value={form.title}
+          onChange={handleChange}
+        />
 
         <label className="input-label">분실 장소 *</label>
-        <input className="input" name="location" placeholder="예: 도서관 2층" value={form.location} onChange={handleChange} />
+        <input
+          className="input"
+          name="location"
+          placeholder="예: 도서관 2층"
+          value={form.location}
+          onChange={handleChange}
+        />
 
         <label className="input-label">분실 날짜 *</label>
-        <input className="input" name="date" type="date" value={form.date} onChange={handleChange} />
+        <input
+          className="input"
+          name="date"
+          type="date"
+          value={form.date}
+          onChange={handleChange}
+        />
 
         <label className="input-label">카테고리 *</label>
-        <select name="category" className="input" value={form.category} onChange={handleChange}>
+        <select
+          name="category"
+          className="input"
+          value={form.category}
+          onChange={handleChange}
+        >
           <option value="">카테고리 선택</option>
           <option value="지갑">지갑</option>
           <option value="휴대폰">휴대폰</option>
@@ -121,7 +160,13 @@ export default function LostCreatePage() {
         />
 
         <label className="input-label">사진 업로드</label>
-        <input className="input" type="file" name="image" accept="image/*" onChange={handleChange} />
+        <input
+          className="input"
+          type="file"
+          name="image"
+          accept="image/*"
+          onChange={handleChange}
+        />
 
         {preview && (
           <div style={{ marginTop: "12px" }}>
@@ -129,7 +174,13 @@ export default function LostCreatePage() {
             <img
               src={preview}
               alt="미리보기"
-              style={{ width: "100%", maxHeight: "240px", objectFit: "cover", borderRadius: "8px", marginTop: "4px" }}
+              style={{
+                width: "100%",
+                maxHeight: "240px",
+                objectFit: "cover",
+                borderRadius: "8px",
+                marginTop: "4px",
+              }}
             />
           </div>
         )}

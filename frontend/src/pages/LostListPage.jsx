@@ -28,6 +28,17 @@ export default function LostListPage() {
     });
   };
 
+  const formatExpireDate = (dateString) => {
+    const date = new Date(dateString);
+    const expireDate = new Date(date.getTime() + 14 * 86400000); // 14일 추가
+    return expireDate.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      weekday: "short"
+    });
+  };
+
   const handleDelete = async (id) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
     try {
@@ -110,6 +121,9 @@ export default function LostListPage() {
               <h3 className="lost-item-title">{item.title}</h3>
               <p className="meta">📍 {item.location}</p>
               <p className="meta">🗓 {formatDate(item.date)}</p>
+              <p className="meta" style={{ color: "#d32f2f", fontWeight: 500 }}>
+                ⏳ 보관 기한: {formatExpireDate(item.created_at)}
+              </p>
             </div>
             {user?.role === "admin" && (
               <button

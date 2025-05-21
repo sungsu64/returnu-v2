@@ -13,6 +13,8 @@ import "./mobile-ui.css";
 import LoginPage from "./pages/LoginPage"; // ✅ 로그인 페이지 import 추가
 import LostRequestPage from "./pages/LostRequestPage";
 import LostRequestListPage from "./pages/LostRequestListPage";
+import NoticeManagerPage from "./pages/NoticeManagerPage";
+
 
 
 function App() {
@@ -29,6 +31,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/lost-request" element={<LostRequestPage />} />
           <Route path="/requests" element={<LostRequestListPage />} />
+          <Route path="/notices/manage" element={<NoticeManagerPage />} />
         </Routes>
       </div>
 
