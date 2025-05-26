@@ -14,7 +14,12 @@ import LoginPage from "./pages/LoginPage"; // ✅ 로그인 페이지 import 추
 import LostRequestPage from "./pages/LostRequestPage";
 import LostRequestListPage from "./pages/LostRequestListPage";
 import NoticeManagerPage from "./pages/NoticeManagerPage";
-
+import LostRequestDetailPage from "./pages/LostRequestDetailPage";
+import MessageSendPage from "./pages/MessageSendPage";
+import MessageInboxPage from "./pages/MessageInboxPage";
+import MessageSentPage from "./pages/MessageSentPage";
+import MessageDetailPage from "./pages/MessageDetailPage";
+import SendMessagePage from "./pages/SendMessagePage";
 
 
 function App() {
@@ -32,6 +37,12 @@ function App() {
           <Route path="/lost-request" element={<LostRequestPage />} />
           <Route path="/requests" element={<LostRequestListPage />} />
           <Route path="/notices/manage" element={<NoticeManagerPage />} />
+          <Route path="/requests/:id" element={<LostRequestDetailPage />} />
+          <Route path="/message/send" element={<MessageSendPage />} />
+          <Route path="/messages/inbox" element={<MessageInboxPage />} />
+          <Route path="/messages/sent" element={<MessageSentPage />} />
+          <Route path="/message/:id" element={<MessageDetailPage />} />
+          <Route path="/send-message" element={<SendMessagePage />} />
         </Routes>
       </div>
 

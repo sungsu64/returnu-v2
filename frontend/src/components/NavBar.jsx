@@ -32,7 +32,7 @@ export default function NavBar() {
         </NavLink>
 
         <NavLink to="/lost/list" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-          📋<br />목록
+          📋<br />분실물
         </NavLink>
 
         <div className="nav-item spacer"></div> {/* 가운데 간격 확보용 */}

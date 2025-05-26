@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/LostRequestPage.css";
 
@@ -13,8 +13,20 @@ export default function LostRequestPage() {
     category: "기타",
     phone: "",
     email: "",
-    image: null
+    image: null,
+    student_id: "", // ✅ 학번 필드 추가
   });
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      const user = JSON.parse(stored);
+      setForm((prev) => ({ ...prev, student_id: user.student_id }));
+    } else {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,7 +40,6 @@ export default function LostRequestPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 제목, 날짜, 장소, 설명 필수 + 연락수단은 전화번호나 이메일 중 하나만 있어도 OK
     if (
       !form.title ||
       !form.date ||
@@ -48,7 +59,7 @@ export default function LostRequestPage() {
     try {
       const res = await fetch("http://localhost:8090/api/lost-requests", {
         method: "POST",
-        body: formData
+        body: formData,
       });
       if (!res.ok) throw new Error("등록 실패");
       alert("요청이 등록되었습니다!");
@@ -118,7 +129,7 @@ export default function LostRequestPage() {
         <label>사진 첨부 (선택)</label>
         <input type="file" name="image" accept="image/*" onChange={handleFileChange} />
 
-        <button type="submit" className="btn-submit">요청 등록</button>
+        <button type="submit" className="btn-submit">게시글 등록</button>
       </form>
     </div>
   );

@@ -8,6 +8,7 @@ export default function MyPage() {
   const [myRequests, setMyRequests] = useState([]);
   const [activityLogs, setActivityLogs] = useState([]);
   const [expiringItems, setExpiringItems] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -48,6 +49,22 @@ export default function MyPage() {
   useEffect(() => {
     if (user?.student_id && user?.role) {
       fetchMyData(user.student_id, user.role);
+
+      // ✅ 쪽지 안읽은 개수 확인
+      fetch(`/api/messages/received/${user.student_id}`)
+        .then((res) => {
+          if (!res.ok) throw new Error("쪽지 API 응답 실패");
+          return res.json();
+        })
+        .then((msgs) => {
+          console.log("📥 받은 쪽지 목록:", msgs);
+          const unread = msgs.filter((m) => m.is_read == 0);
+          console.log("🔴 안 읽은 쪽지:", unread);
+          setUnreadCount(unread.length);
+        })
+        .catch((err) => {
+          console.error("❌ 쪽지 불러오기 실패:", err);
+        });
     }
   }, [user, fetchMyData]);
 
@@ -73,7 +90,7 @@ export default function MyPage() {
         display: "flex", justifyContent: "space-between",
         alignItems: "center", marginBottom: "16px", padding: "0 16px"
       }}>
-        <h1 className="title">👤 내 정보</h1>
+        <h1 className="title" style={{ fontSize: "1.6rem" }}>👤 내 정보</h1>
         <div>
           {user.role === "admin" ? (
             <button onClick={() => navigate("/notices/manage")} style={actionBtnStyle}>공지사항 등록</button>
@@ -93,6 +110,39 @@ export default function MyPage() {
         </div>
         <p>이름: {user?.name}</p>
         <p>학번: {user?.student_id}</p>
+
+        <div style={{ marginTop: "12px", display: "flex", gap: "10px" }}>
+          <button
+            style={{ ...miniBtnStyle, position: "relative" }}
+            onClick={() => navigate("/messages/inbox")}
+          >
+            📥 받은 쪽지함
+            {unreadCount > 0 && (
+              <span style={{
+                position: "absolute",
+                top: "-4px",
+                right: "-4px",
+                backgroundColor: "red",
+                color: "white",
+                borderRadius: "50%",
+                width: "16px",
+                height: "16px",
+                fontSize: "10px",
+                fontWeight: "bold",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}>
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
+          </button>
+
+          <button
+            style={miniBtnStyle}
+            onClick={() => navigate("/messages/sent")}
+          >📤 보낸 쪽지함</button>
+        </div>
       </section>
 
       <section style={sectionStyle}>
@@ -204,4 +254,14 @@ const actionBtnStyle = {
   border: "none",
   borderRadius: "8px",
   cursor: "pointer",
+};
+
+const miniBtnStyle = {
+  fontSize: "0.75rem",
+  padding: "6px 10px",
+  backgroundColor: "#e1f5fe",
+  border: "1px solid #81d4fa",
+  borderRadius: "6px",
+  cursor: "pointer",
+  position: "relative",
 };

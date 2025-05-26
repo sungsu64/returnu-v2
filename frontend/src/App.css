@@ -1,9 +1,9 @@
 /* App.css */
-
 body {
   margin: 0;
   font-family: sans-serif;
   background: #f9f9f9;
+  overflow-x: hidden;
 }
 
 #root {
@@ -16,5 +16,10 @@ body {
   max-width: 480px;
   min-height: 100vh;
   background-color: white;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  overflow: visible; /* ✅ 핵심 */
+  position: relative;
+}
+.app-wrapper {
+  overflow: visible; /* ✅ 진짜 핵심 */
 }

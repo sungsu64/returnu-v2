@@ -12,6 +12,8 @@ export default function LostListPage() {
   const [error, setError] = useState(null);
   const [order, setOrder] = useState("desc");
   const [status, setStatus] = useState("전체");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   const queryParams = new URLSearchParams(location.search);
   const query = queryParams.get("query") || "";
@@ -30,7 +32,7 @@ export default function LostListPage() {
 
   const formatExpireDate = (dateString) => {
     const date = new Date(dateString);
-    const expireDate = new Date(date.getTime() + 14 * 86400000); // 14일 추가
+    const expireDate = new Date(date.getTime() + 14 * 86400000);
     return expireDate.toLocaleDateString("ko-KR", {
       year: "numeric",
       month: "numeric",
@@ -76,6 +78,14 @@ export default function LostListPage() {
     fetchData();
   }, [query, cat, order, status]);
 
+  // ✅ pagination 계산
+  const totalPages = Math.ceil(items.length / itemsPerPage);
+  const paginated = items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className="lost-list-wrapper">
       <h1 className="lost-list-title">📦물건을 찾아가세요!</h1>
@@ -105,7 +115,7 @@ export default function LostListPage() {
       )}
 
       {!loading &&
-        items.map((item) => (
+        paginated.map((item) => (
           <div
             className={`lost-item-card ${item.claimed_by ? "claimed" : ""}`}
             key={item.id}
@@ -138,6 +148,32 @@ export default function LostListPage() {
             )}
           </div>
         ))}
+
+      {/* ✅ 페이지네이션 */}
+      {totalPages > 1 && (
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+            <button
+              key={pageNum}
+              onClick={() => handlePageClick(pageNum)}
+              style={{
+                padding: "8px 12px",
+                margin: "0 4px",
+                borderRadius: "8px",
+                border: "1px solid #ccc",
+                background: currentPage === pageNum ? "#ffcc80" : "#fff",
+                fontWeight: currentPage === pageNum ? "bold" : "normal",
+                cursor: "pointer",
+              }}
+            >
+              {pageNum}
+            </button>
+          ))}
+          <p style={{ marginTop: "8px", fontSize: "0.85rem", color: "#666" }}>
+            현재 페이지: {currentPage} / {totalPages}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
