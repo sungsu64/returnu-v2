@@ -20,6 +20,11 @@ import MessageInboxPage from "./pages/MessageInboxPage";
 import MessageSentPage from "./pages/MessageSentPage";
 import MessageDetailPage from "./pages/MessageDetailPage";
 import SendMessagePage from "./pages/SendMessagePage";
+import InquiryListPage from "./pages/InquiryListPage";
+import InquiryDetailPage from "./pages/InquiryDetailPage";
+import ContactPage from "./pages/ContactPage"; // 기존 문의작성
+import AdminInquiryListPage from "./pages/AdminInquiryListPage";
+
 
 
 function App() {
@@ -43,6 +48,11 @@ function App() {
           <Route path="/messages/sent" element={<MessageSentPage />} />
           <Route path="/message/:id" element={<MessageDetailPage />} />
           <Route path="/send-message" element={<SendMessagePage />} />
+          <Route path="/contact" element={<ContactPage />} />
+<Route path="/contact/history" element={<InquiryListPage />} />
+<Route path="/contact/:id" element={<InquiryDetailPage />} />
+<Route path="/admin/inquiries" element={<AdminInquiryListPage />} />
+
         </Routes>
       </div>
 

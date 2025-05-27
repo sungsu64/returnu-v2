@@ -404,6 +404,130 @@ app.get("/api/admin/activity-logs", (req, res) => {
   });
 });
 
+app.get("/api/inquiries/by-student/:student_id", (req, res) => {
+  const { student_id } = req.params;
+  const query = `
+    SELECT id, title, created_at, email
+    FROM inquiries
+    WHERE student_id = ?
+    ORDER BY created_at DESC
+  `;
+  connection.query(query, [student_id], (err, results) => {
+    if (err) {
+      console.error("❌ 문의 목록 조회 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.json(results);
+  });
+});
+
+app.post("/api/inquiries", (req, res) => {
+  const { name, student_id, email, title, message } = req.body;
+
+  if (!name || !student_id || !email || !title || !message) {
+    return res.status(400).json({ error: "모든 필드를 입력해주세요." });
+  }
+
+  const query = `
+    INSERT INTO inquiries (name, student_id, email, title, message)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+
+  connection.query(query, [name, student_id, email, title, message], (err, result) => {
+    if (err) {
+      console.error("❌ 문의 등록 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.status(201).json({ message: "문의가 등록되었습니다.", id: result.insertId });
+  });
+});
+
+// 🔽 문의 상세 조회
+app.get("/api/inquiries/:id", (req, res) => {
+  const { id } = req.params;
+  const query = `SELECT * FROM inquiries WHERE id = ?`;
+  connection.query(query, [id], (err, results) => {
+    if (err) return res.status(500).json({ error: "서버 오류" });
+    if (results.length === 0) return res.status(404).json({ error: "해당 문의 없음" });
+    res.json(results[0]);
+  });
+});
+
+app.post("/api/feedbacks", (req, res) => {
+  const { student_id, content } = req.body;
+
+  if (!student_id || !content) {
+    return res.status(400).json({ error: "모든 필드를 입력해주세요." });
+  }
+
+  const query = `
+    INSERT INTO feedbacks (student_id, content)
+    VALUES (?, ?)
+  `;
+
+  connection.query(query, [student_id, content], (err, result) => {
+    if (err) {
+      console.error("❌ 피드백 등록 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.status(201).json({ message: "피드백이 저장되었습니다." });
+  });
+});
+
+app.get("/api/feedbacks", (req, res) => {
+  const query = `
+    SELECT id, student_id, content, created_at
+    FROM feedbacks
+    ORDER BY created_at DESC
+  `;
+
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("❌ 피드백 조회 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.json(results);
+  });
+});
+
+app.get("/api/inquiries", (req, res) => {
+  const query = `
+    SELECT id, title, student_id, email, created_at
+    FROM inquiries
+    ORDER BY created_at DESC
+  `;
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("❌ 전체 문의 조회 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.json(results);
+  });
+});
+
+app.patch("/api/inquiries/:id/reply", (req, res) => {
+  const { id } = req.params;
+  const { reply } = req.body;
+
+  if (!reply) {
+    return res.status(400).json({ error: "답변 내용을 입력해주세요." });
+  }
+
+  const query = `UPDATE inquiries SET reply = ? WHERE id = ?`;
+  connection.query(query, [reply, id], (err, result) => {
+    if (err) {
+      console.error("❌ 답변 저장 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.json({ message: "답변이 등록되었습니다." });
+  });
+});
+
+
+
+
+
+
 // 🔚 React fallback
 app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/build/index.html"));
