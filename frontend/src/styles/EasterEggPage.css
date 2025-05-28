@@ -1,0 +1,41 @@
+.easter-egg-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to top right, #ffe0b2, #fff8e1);
+  align-items: center;
+  justify-content: center;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+}
+
+.emoji {
+  font-size: 100px;
+  animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.easter-msg {
+  margin-top: 20px;
+  font-size: 24px;
+  color: #5d4037;
+  text-align: center;
+}
+
+.back-btn {
+  margin-top: 40px;
+  padding: 10px 20px;
+  background-color: #ffca28;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.back-btn:hover {
+  background-color: #ffc107;
+}

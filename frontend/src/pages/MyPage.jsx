@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 export default function MyPage() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [activityLogs, setActivityLogs] = useState([]);
   const [expiringItems, setExpiringItems] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [feedback, setFeedback] = useState("");
@@ -23,12 +22,10 @@ export default function MyPage() {
 
   const fetchMyData = useCallback(async (student_id, role) => {
     try {
-      const [expRes, logRes] = await Promise.all([
+      const [expRes] = await Promise.all([
         fetch(`/api/lost-items/expiring-soon`),
-        role === "admin" ? fetch(`/api/admin/activity-logs`) : Promise.resolve({ json: () => [] }),
       ]);
       setExpiringItems(await expRes.json());
-      setActivityLogs(role === "admin" ? await logRes.json() : []);
     } catch (err) {
       console.error("❌ 데이터 불러오기 실패:", err);
     }
@@ -41,7 +38,7 @@ export default function MyPage() {
       fetch(`/api/messages/received/${user.student_id}`)
         .then((res) => res.json())
         .then((msgs) => {
-          const unread = msgs.filter((m) => m.is_read == 0);
+          const unread = msgs.filter((m) => m.is_read === 0);
           setUnreadCount(unread.length);
         });
 
@@ -52,12 +49,6 @@ export default function MyPage() {
       }
     }
   }, [user, fetchMyData]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    alert("로그아웃되었습니다.");
-    navigate("/");
-  };
 
   const handleFeedbackSubmit = async () => {
     if (!feedback.trim()) return alert("내용을 입력해주세요.");
@@ -100,10 +91,7 @@ export default function MyPage() {
               <div style={{ fontSize: "0.85rem", color: "#666" }}>학번: {user.student_id}</div>
             </div>
           </div>
-
-          
-            <button onClick={() => navigate("/settings")}>⚙️</button>
-          
+          <button onClick={() => navigate("/settings")}>⚙️</button>
         </div>
 
         {/* 관리자 전용 상단 버튼 */}
@@ -122,7 +110,7 @@ export default function MyPage() {
         <div style={{ display: "flex", justifyContent: "space-around", marginBottom: "24px" }}>
           <CircleBtn label="내 글목록" icon="🗂️" onClick={() => navigate("/myposts")} />
           <CircleBtn label="문의 내역" icon="📨" onClick={() => user.role === "admin" ? navigate("/admin/inquiries") : navigate("/contact/history")} />
-          <CircleBtn label="눌러봐봐" icon="🎁" onClick={() => navigate("/feedback")} />
+          <CircleBtn label="눌러봐봐" icon="🎁" onClick={() => user.role === "admin" ? navigate("/feedback") : navigate("/easter-egg")} />
         </div>
 
         {/* 사각형 버튼 */}
@@ -179,8 +167,6 @@ export default function MyPage() {
             {feedbackSent && <p style={{ color: "#4caf50", marginTop: "8px" }}>✅ 피드백이 전송되었습니다.</p>}
           </>
         )}
-
-
       </div>
     </div>
   );

@@ -28,7 +28,11 @@ import MyPostsPage from "./pages/MyPostsPage";
 import AdminPostsPage from "./pages/AdminPostsPage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
 import SettingsPage from "./pages/SettingsPage";
-
+import EasterEggPage from "./pages/EasterEggPage";
+import EditFeedbackPage from "./pages/EditFeedbackPage";
+import EditInquiryPage from "./pages/EditInquiryPage";
+import EditFoundItemPage from "./pages/EditFoundItemPage";
+import EditLostItemPage from "./pages/EditLostItemPage";
 
 
 
@@ -61,6 +65,15 @@ function App() {
           <Route path="/admin/posts" element={<AdminPostsPage />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/easter-egg" element={<EasterEggPage />} />
+          <Route path="/edit/피드백/:id" element={<EditFeedbackPage />} />
+          <Route path="/edit/문의하기/:id" element={<EditInquiryPage />} />
+          <Route path="/edit/습득물/:id" element={<EditFoundItemPage />} />
+          <Route path="/edit/분실물/:id" element={<EditLostItemPage />} />
+
+          
+          
+
 
         </Routes>
       </div>

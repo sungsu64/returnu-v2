@@ -1,0 +1,75 @@
+.edit-feedback-wrapper {
+  background-color: #fff;
+  padding: 28px;
+  max-width: 480px;
+  margin: 40px auto;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.edit-feedback-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #222;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.edit-feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.edit-feedback-form label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #555;
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-feedback-form textarea {
+  margin-top: 8px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background: #fafafa;
+  min-height: 140px;
+  resize: vertical;
+}
+
+.edit-feedback-form textarea:focus {
+  border-color: #4caf50;
+  outline: none;
+  background: #fff;
+}
+
+.edit-feedback-btns {
+  display: flex;
+  justify-content: space-between;
+}
+
+.edit-feedback-btns .btn {
+  flex: 1;
+  padding: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 0 4px;
+  transition: background-color 0.2s ease;
+}
+
+.edit-feedback-btns .submit {
+  background-color: #4caf50;
+  color: white;
+}
+
+.edit-feedback-btns .back {
+  background-color: #9e9e9e;
+  color: white;
+}

@@ -1,0 +1,96 @@
+.edit-found-wrapper {
+  background-color: #fff;
+  padding: 24px;
+  max-width: 480px;
+  margin: 30px auto;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.edit-found-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #333;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.edit-found-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.edit-found-form label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #555;
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-found-form input,
+.edit-found-form select,
+.edit-found-form textarea {
+  margin-top: 6px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  transition: border 0.2s ease;
+}
+
+.edit-found-form input:focus,
+.edit-found-form select:focus,
+.edit-found-form textarea:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+.edit-found-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.edit-found-preview {
+  width: 100%;
+  max-height: 240px;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  margin-top: 6px;
+}
+
+.edit-found-btns {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.edit-found-btns .btn {
+  flex: 1;
+  padding: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 0 4px;
+  transition: background-color 0.2s ease;
+}
+
+.edit-found-btns .edit {
+  background-color: #4caf50;
+  color: white;
+}
+
+.edit-found-btns .reset {
+  background-color: #ff9800;
+  color: white;
+}
+
+.edit-found-btns .back {
+  background-color: #9e9e9e;
+  color: white;
+}

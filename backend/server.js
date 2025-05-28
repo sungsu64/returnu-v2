@@ -625,6 +625,167 @@ app.get("/api/lost_requests/all", (req, res) => {
   });
 });
 
+// 사용자 내 글 관리 삭제
+app.delete("/api/inquiries/:id", (req, res) => {
+  const { id } = req.params;
+  const query = `DELETE FROM inquiries WHERE id = ?`;
+  connection.query(query, [id], (err, result) => {
+    if (err) {
+      console.error("❌ 문의 삭제 오류:", err);
+      return res.status(500).json({ error: "삭제 실패" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "해당 글이 없습니다." });
+    }
+    res.status(200).json({ message: "삭제 완료" });
+  });
+});
+
+app.delete("/api/feedbacks/:id", (req, res) => {
+  const { id } = req.params;
+  const query = `DELETE FROM feedbacks WHERE id = ?`;
+  connection.query(query, [id], (err, result) => {
+    if (err) {
+      console.error("❌ 피드백 삭제 오류:", err);
+      return res.status(500).json({ error: "삭제 실패" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "해당 피드백이 없습니다." });
+    }
+    res.status(200).json({ message: "삭제 완료" });
+  });
+});
+
+app.delete("/api/lost_requests/:id", (req, res) => {
+  const { id } = req.params;
+  const query = `DELETE FROM lost_requests WHERE id = ?`;
+  connection.query(query, [id], (err, result) => {
+    if (err) {
+      console.error("❌ 습득물 삭제 오류:", err);
+      return res.status(500).json({ error: "삭제 실패" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "해당 요청이 없습니다." });
+    }
+    res.status(200).json({ message: "삭제 완료" });
+  });
+});
+
+//사용자 내 글 관리 피드백 수정
+app.get("/api/feedbacks/:id", (req, res) => {
+  const { id } = req.params;
+  const query = `SELECT id, student_id, content, created_at FROM feedbacks WHERE id = ?`;
+
+  connection.query(query, [id], (err, results) => {
+    if (err) return res.status(500).json({ error: "서버 오류" });
+    if (results.length === 0) return res.status(404).json({ error: "피드백 없음" });
+    res.json(results[0]);
+  });
+});
+
+app.patch("/api/feedbacks/:id", (req, res) => {
+  const { id } = req.params;
+  const { content } = req.body;
+
+  if (!content) return res.status(400).json({ error: "내용이 비어있습니다." });
+
+  const query = `UPDATE feedbacks SET content = ? WHERE id = ?`;
+  connection.query(query, [content, id], (err, result) => {
+    if (err) {
+      console.error("❌ 피드백 수정 오류:", err);
+      return res.status(500).json({ error: "수정 실패" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "피드백 없음" });
+    }
+    res.status(200).json({ message: "수정 완료" });
+  });
+});
+
+//사용자 내 글 관리 문의하기 수정
+app.patch("/api/inquiries/:id", (req, res) => {
+  const { id } = req.params;
+  const { title, message } = req.body;
+  if (!title || !message) return res.status(400).json({ error: "필드 누락" });
+
+  const query = "UPDATE inquiries SET title = ?, message = ? WHERE id = ?";
+  connection.query(query, [title, message, id], (err, result) => {
+    if (err) return res.status(500).json({ error: "서버 오류" });
+    if (result.affectedRows === 0) return res.status(404).json({ error: "해당 글 없음" });
+    res.status(200).json({ message: "수정 완료" });
+  });
+});
+
+//사용자 내 글 관리 습득물 수정
+app.patch("/api/lost-items/:id", upload.single("image"), (req, res) => {
+  const { id } = req.params;
+  const {
+    title, location, date, description, category
+  } = req.body;
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+
+  let sql = `
+    UPDATE lost_items
+    SET title = ?, location = ?, date = ?, description = ?, category = ?
+  `;
+  const values = [title, location, date, description, category];
+
+  if (imagePath) {
+    sql += `, image = ?`;
+    values.push(imagePath);
+  }
+
+  sql += ` WHERE id = ?`;
+  values.push(id);
+
+  connection.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("❌ 습득물 수정 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.json({ message: "수정 완료" });
+  });
+});
+
+app.put("/api/lost_requests/:id", upload.single("image"), (req, res) => {
+  const { id } = req.params;
+  const { title, date, location, description, category, phone, email } = req.body;
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+
+  let sql = `
+    UPDATE lost_requests
+    SET title = ?, date = ?, location = ?, description = ?, category = ?, phone = ?, email = ?
+  `;
+  const values = [title, date, location, description, category, phone, email];
+
+  if (imagePath) {
+    sql += `, image = ?`;
+    values.push(imagePath);
+  }
+
+  sql += ` WHERE id = ?`;
+  values.push(id);
+
+  connection.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("❌ 습득물 수정 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.status(200).json({ message: "수정 완료" });
+  });
+});
+
+app.get("/api/lost_requests/:id", (req, res) => {
+  const { id } = req.params;
+  const query = `SELECT * FROM lost_requests WHERE id = ?`;
+  connection.query(query, [id], (err, results) => {
+    if (err) return res.status(500).send("서버 오류");
+    if (results.length === 0) return res.status(404).send("없음");
+    res.json(results[0]);
+  });
+});
+
+
 
 // 🔚 React fallback
 app.get("/*", (req, res) => {

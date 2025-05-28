@@ -8,26 +8,24 @@ export default function MyPostsPage() {
   const [activeTab, setActiveTab] = useState("분실물");
   const [posts, setPosts] = useState({ lost: [], found: [], inquiry: [], feedback: [] });
 
-useEffect(() => {
-  const stored = localStorage.getItem("user");
-  if (!stored) {
-    alert("로그인이 필요합니다.");
-    navigate("/login");
-    return;
-  }
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (!stored) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+      return;
+    }
 
-  const parsed = JSON.parse(stored);
-  setUser(parsed);
+    const parsed = JSON.parse(stored);
+    setUser(parsed);
 
-  // ✅ 관리자일 경우 관리자용 페이지로 이동
-  if (parsed.role === "admin") {
-    navigate("/admin/posts");
-    return;
-  }
+    if (parsed.role === "admin") {
+      navigate("/admin/posts");
+      return;
+    }
 
-  fetchAllPosts(parsed.student_id);
-}, [navigate]);
-
+    fetchAllPosts(parsed.student_id);
+  }, [navigate]);
 
   const fetchAllPosts = async (student_id) => {
     try {
@@ -65,18 +63,28 @@ useEffect(() => {
 
     return (
       <div className="my-posts-list">
-        {data.map((item) => (
-          <div key={item.id} className="my-posts-item">
-            <div className="my-posts-item-content">
-              <strong className="my-posts-title">{item.title || item.content || item.message}</strong>
-              <span className="my-posts-date">{item.date || item.created_at}</span>
+        {data.map((item) => {
+          const formattedDate = new Date(item.date || item.created_at).toLocaleString("ko-KR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          return (
+            <div key={item.id} className="my-post-card">
+              <div className="post-content">
+                <h3 className="post-title">{item.title || item.content || item.message}</h3>
+                <p className="post-date">{formattedDate}</p>
+              </div>
+              <div className="post-buttons">
+                <button className="edit-btn" onClick={() => navigate(`/edit/${activeTab}/${item.id}`)}>✏ 수정</button>
+                <button className="delete-btn" onClick={() => handleDelete(activeTab, item.id)}>🗑 삭제</button>
+              </div>
             </div>
-            <div className="my-posts-item-actions">
-              <button onClick={() => navigate(`/edit/${activeTab}/${item.id}`)} className="edit-btn">✏️ 수정</button>
-              <button onClick={() => handleDelete(activeTab, item.id)} className="delete-btn">🗑 삭제</button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     );
   };
@@ -85,7 +93,7 @@ useEffect(() => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
     const typeMap = {
       분실물: "lost-items",
-      습득물: "found-items",
+      습득물: "lost_requests",
       문의하기: "inquiries",
       피드백: "feedbacks",
     };
@@ -102,7 +110,7 @@ useEffect(() => {
 
   return (
     <div className="app-wrapper my-posts-wrapper">
-      <h1 className="my-posts-title-main"> 내 글 관리</h1>
+      <h1 className="my-posts-title-main">내 글 관리</h1>
       <div className="my-posts-tabs">
         {["분실물", "습득물", "문의하기", "피드백"].map((tab) => (
           <button
@@ -115,6 +123,9 @@ useEffect(() => {
         ))}
       </div>
       <div>{renderList()}</div>
+      <div className="my-posts-back-wrapper">
+        <button className="back-btn" onClick={() => navigate(-1)}>🔙 뒤로가기</button>
+      </div>
     </div>
   );
 }
