@@ -1,79 +1,87 @@
+/* MyPostsPage.css */
+
 .my-posts-wrapper {
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
+  padding: 20px;
+  background-color: #fdf9f5;
+  min-height: 100vh;
 }
 
 .my-posts-title-main {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
   text-align: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
   font-weight: bold;
+  color: #222;
 }
 
 .my-posts-tabs {
   display: flex;
   justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
 }
 
 .my-posts-tab-btn {
-  padding: 8px 16px;
+  padding: 10px 18px;
+  background-color: #f3f3f3;
   border: none;
   border-radius: 20px;
-  background-color: #eee;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: 0.2s ease-in-out;
+  transition: background-color 0.2s;
 }
 
 .my-posts-tab-btn.active {
-  background-color: #ffb74d;
-  color: white;
+  background-color: #ffcb74;
   font-weight: bold;
 }
 
 .my-posts-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 16px;
+  padding: 0 20px;
 }
 
-.my-post-card {
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+.my-post-card.upgraded {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 18px;
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post-content {
+  flex: 1;
 }
 
 .post-title {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: bold;
-  margin-bottom: 0.3rem;
+  color: #222;
+  margin-bottom: 6px;
 }
 
 .post-date {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #888;
 }
 
 .post-buttons {
   display: flex;
-  gap: 10px;
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: 6px;
+  margin-left: 16px;
 }
 
 .edit-btn, .delete-btn {
   padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  border-radius: 8px;
   cursor: pointer;
+  border: none;
   transition: background-color 0.2s ease;
 }
 
@@ -87,39 +95,29 @@
   color: #721c24;
 }
 
-.edit-btn:hover {
-  background-color: #ffe8a1;
-}
-
-.delete-btn:hover {
-  background-color: #f5b5b8;
-}
-
 .my-posts-empty {
   text-align: center;
-  color: #999;
-  font-size: 1rem;
-  margin-top: 2rem;
+  font-size: 0.95rem;
+  color: #888;
+  margin-top: 20px;
 }
 
 .my-posts-back-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 24px;
+  text-align: center;
+  margin-top: 32px;
 }
 
 .back-btn {
-  padding: 10px 20px;
-  background-color: #9e9e9e;
-  color: white;
+  background-color: #f3f3f3;
+  padding: 10px 18px;
   font-size: 0.95rem;
-  font-weight: 600;
+  border-radius: 10px;
   border: none;
-  border-radius: 8px;
   cursor: pointer;
+  color: #333;
   transition: background-color 0.2s ease;
 }
 
 .back-btn:hover {
-  background-color: #7b7b7b;
+  background-color: #e0e0e0;
 }

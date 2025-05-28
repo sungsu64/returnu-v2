@@ -23,16 +23,12 @@ export default function InquiryListPage() {
         if (!res.ok) throw new Error("서버 오류");
         return res.json();
       })
-      .then((data) => {
-        setInquiries(data);
-      })
+      .then((data) => setInquiries(data))
       .catch((err) => {
         console.error("❌ 문의 목록 불러오기 실패:", err);
         setError("문의 목록을 불러올 수 없습니다.");
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   }, [navigate]);
 
   const handleWriteInquiry = () => {
@@ -41,6 +37,10 @@ export default function InquiryListPage() {
 
   const handleViewDetail = (id) => {
     navigate(`/contact/${id}`);
+  };
+
+  const handleBack = () => {
+    navigate(-1);
   };
 
   if (loading) return <div className="inquiry-wrapper">⏳ 로딩 중...</div>;
@@ -72,6 +72,12 @@ export default function InquiryListPage() {
           ))}
         </div>
       )}
+
+      <div className="inquiry-back-wrapper">
+        <button className="inquiry-back-btn" onClick={handleBack}>
+          ⬅ 뒤로가기
+        </button>
+      </div>
     </div>
   );
 }

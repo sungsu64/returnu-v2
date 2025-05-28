@@ -90,3 +90,23 @@
   font-size: 0.95rem;
   color: #555;
 }
+
+.inquiry-back-wrapper {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.inquiry-back-btn {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  color: #333;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.inquiry-back-btn:hover {
+  background-color: #e0e0e0;
+}

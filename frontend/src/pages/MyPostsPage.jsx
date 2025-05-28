@@ -59,7 +59,7 @@ export default function MyPostsPage() {
     };
     const data = tabMap[activeTab];
 
-    if (!data.length) return <p className="my-posts-empty">게시물이 없습니다.</p>;
+    if (!data.length) return <p className="my-posts-empty">📭 게시물이 없습니다.</p>;
 
     return (
       <div className="my-posts-list">
@@ -73,10 +73,10 @@ export default function MyPostsPage() {
           });
 
           return (
-            <div key={item.id} className="my-post-card">
+            <div key={item.id} className="my-post-card upgraded">
               <div className="post-content">
-                <h3 className="post-title">{item.title || item.content || item.message}</h3>
-                <p className="post-date">{formattedDate}</p>
+                <h3 className="post-title">📝 {item.title || item.content || item.message}</h3>
+                <p className="post-date">📅 {formattedDate}</p>
               </div>
               <div className="post-buttons">
                 <button className="edit-btn" onClick={() => navigate(`/edit/${activeTab}/${item.id}`)}>✏ 수정</button>
@@ -110,7 +110,7 @@ export default function MyPostsPage() {
 
   return (
     <div className="app-wrapper my-posts-wrapper">
-      <h1 className="my-posts-title-main">내 글 관리</h1>
+      <h1 className="my-posts-title-main">📂 내 글 관리</h1>
       <div className="my-posts-tabs">
         {["분실물", "습득물", "문의하기", "피드백"].map((tab) => (
           <button
