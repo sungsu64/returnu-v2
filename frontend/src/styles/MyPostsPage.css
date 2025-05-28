@@ -1,0 +1,119 @@
+.my-posts-wrapper {
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fff;
+}
+
+.my-posts-title-main {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.my-posts-title-main::before {
+  content: "📁";
+  font-size: 1.6rem;
+}
+
+.my-posts-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.my-posts-tab-btn {
+  padding: 8px 18px;
+  border-radius: 24px;
+  background: #eee;
+  color: #444;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background 0.25s;
+}
+
+.my-posts-tab-btn.active {
+  background-color: #d19c66;
+  color: white;
+}
+
+.my-posts-empty {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  margin-top: 40px;
+}
+
+.my-posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.my-posts-item {
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-left: 5px solid #d19c66;
+  border-radius: 10px;
+  padding: 16px;
+  transition: box-shadow 0.2s;
+}
+
+.my-posts-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.my-posts-item-content {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.my-posts-date {
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.my-posts-item-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-btn {
+  padding: 6px 14px;
+  background-color: #f0f0f0;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.edit-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.delete-btn {
+  padding: 6px 14px;
+  background-color: #ff6666;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #e74c3c;
+}

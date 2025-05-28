@@ -24,6 +24,9 @@ import InquiryListPage from "./pages/InquiryListPage";
 import InquiryDetailPage from "./pages/InquiryDetailPage";
 import ContactPage from "./pages/ContactPage"; // 기존 문의작성
 import AdminInquiryListPage from "./pages/AdminInquiryListPage";
+import MyPostsPage from "./pages/MyPostsPage";
+import AdminPostsPage from "./pages/AdminPostsPage";
+
 
 
 
@@ -52,6 +55,9 @@ function App() {
 <Route path="/contact/history" element={<InquiryListPage />} />
 <Route path="/contact/:id" element={<InquiryDetailPage />} />
 <Route path="/admin/inquiries" element={<AdminInquiryListPage />} />
+<Route path="/myposts" element={<MyPostsPage />} />
+<Route path="/admin/posts" element={<AdminPostsPage />} />
+
 
         </Routes>
       </div>

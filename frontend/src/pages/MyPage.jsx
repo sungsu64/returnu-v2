@@ -150,7 +150,10 @@ export default function MyPage() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <h2 style={sectionTitleStyle}>내 프로필</h2>
           <div>
-            <button onClick={handleSettings} style={settingBtnStyle}>설정</button>
+            <button onClick={() => navigate("/myposts")} style={{ ...actionBtnStyle, marginLeft: "8px" }}>
+  내 글 관리
+</button>
+
             <button onClick={handleLogout} style={logoutBtnStyle}>로그아웃</button>
           </div>
         </div>

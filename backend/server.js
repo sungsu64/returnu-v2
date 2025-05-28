@@ -505,6 +505,52 @@ app.get("/api/inquiries", (req, res) => {
   });
 });
 
+app.get("/api/lost-items/by-student/:student_id", (req, res) => {
+  const { student_id } = req.params;
+  const query = `
+    SELECT id, title, location, date
+    FROM lost_items
+    WHERE student_id = ?
+    ORDER BY date DESC
+  `;
+  connection.query(query, [student_id], (err, results) => {
+    if (err) return res.status(500).send("서버 에러");
+    res.json(results);
+  });
+});
+
+app.get("/api/feedbacks/by-student/:student_id", (req, res) => {
+  const { student_id } = req.params;
+  const query = `
+    SELECT id, content, created_at
+    FROM feedbacks
+    WHERE student_id = ?
+    ORDER BY created_at DESC
+  `;
+  connection.query(query, [student_id], (err, results) => {
+    if (err) return res.status(500).send("서버 에러");
+    res.json(results);
+  });
+});
+
+
+// server.js
+app.get("/api/lost_requests/by-student/:student_id", (req, res) => {
+  const { student_id } = req.params;
+  const query = `
+    SELECT id, title, location, date
+    FROM lost_requests
+    WHERE student_id = ?
+    ORDER BY date DESC
+  `;
+  connection.query(query, [student_id], (err, results) => {
+    if (err) return res.status(500).send("서버 에러");
+    res.json(results);
+  });
+});
+
+
+
 app.patch("/api/inquiries/:id/reply", (req, res) => {
   const { id } = req.params;
   const { reply } = req.body;
@@ -524,8 +570,37 @@ app.patch("/api/inquiries/:id/reply", (req, res) => {
 });
 
 
+// 🔽 관리자용 전체 분실물 글 조회
+app.get("/api/lost-items/all", (req, res) => {
+  const query = `
+    SELECT id, title, location, date, student_id
+    FROM lost_items
+    ORDER BY date DESC
+  `;
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("❌ 분실물 전체 조회 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.json(results);
+  });
+});
 
-
+// 🔽 관리자용 전체 습득물 요청 글 조회
+app.get("/api/lost_requests/all", (req, res) => {
+  const query = `
+    SELECT id, title, location, date, student_id
+    FROM lost_requests
+    ORDER BY date DESC
+  `;
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("❌ 습득물 전체 조회 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.json(results);
+  });
+});
 
 
 // 🔚 React fallback
