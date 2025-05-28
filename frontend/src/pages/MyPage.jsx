@@ -180,19 +180,7 @@ export default function MyPage() {
           </>
         )}
 
-        {/* 관리자 활동 기록 */}
-        {user.role === "admin" && (
-          <>
-            <h3 style={titleStyle}>🕓 최근 관리자 활동</h3>
-            {activityLogs.length === 0
-              ? <p style={emptyText}>최근 활동 내역 없음</p>
-              : <ul style={ulStyle}>
-                  {activityLogs.map((log, idx) => (
-                    <li key={idx}>📌 {log.action} - {new Date(log.timestamp).toLocaleString("ko-KR")}</li>
-                  ))}
-                </ul>}
-          </>
-        )}
+
       </div>
     </div>
   );

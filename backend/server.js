@@ -37,6 +37,29 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+app.post("/api/users/change-password", (req, res) => {
+  const { student_id, currentPassword, newPassword } = req.body;
+
+  connection.query(
+    "SELECT * FROM users WHERE student_id = ? AND password = ?",
+    [student_id, currentPassword],
+    (err, results) => {
+      if (err) return res.status(500).json({ message: "DB 오류" });
+      if (results.length === 0)
+        return res.status(400).json({ message: "현재 비밀번호가 올바르지 않습니다." });
+
+      connection.query(
+        "UPDATE users SET password = ? WHERE student_id = ?",
+        [newPassword, student_id],
+        (err2) => {
+          if (err2) return res.status(500).json({ message: "비밀번호 업데이트 실패" });
+          res.json({ message: "비밀번호 변경 성공" });
+        }
+      );
+    }
+  );
+});
+
 
 // ✅ 쪽지 전송 API (is_read 포함)
 app.post("/api/messages", (req, res) => {
