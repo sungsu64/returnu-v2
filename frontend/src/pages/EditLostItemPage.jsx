@@ -1,3 +1,4 @@
+// src/pages/EditLostItemPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLang } from "../locale";
@@ -10,7 +11,6 @@ export default function EditLostItemPage() {
 
   // 카테고리 리스트 (한글)
   const CATEGORY_LIST = [
-    "전체", // 보통 등록/수정에서는 제외하지만 필요하면 남겨두세요!
     "전자기기",
     "의류",
     "악세서리",
@@ -24,12 +24,13 @@ export default function EditLostItemPage() {
     location: "",
     date: "",
     description: "",
-    category: "기타", // 한글 기본값
+    category: "기타",
     image: null,
   });
   const [preview, setPreview] = useState(null);
   const [originalForm, setOriginalForm] = useState(null);
 
+  // 기존 데이터 불러오기
   useEffect(() => {
     fetch(`/api/lost-items/${id}`)
       .then((res) => {
@@ -38,11 +39,11 @@ export default function EditLostItemPage() {
       })
       .then((data) => {
         setForm({
-          title: data.title,
-          location: data.location,
-          date: data.date.split("T")[0],
-          description: data.description,
-          category: data.category,
+          title: data.title || "",
+          location: data.location || "",
+          date: data.date ? data.date.split("T")[0] : "",
+          description: data.description || "",
+          category: data.category || "기타",
           image: null,
         });
         setOriginalForm(data);
@@ -54,6 +55,7 @@ export default function EditLostItemPage() {
       });
   }, [id, t]);
 
+  // 입력값 변경 핸들러
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "image") {
@@ -65,11 +67,18 @@ export default function EditLostItemPage() {
     }
   };
 
+  // 수정 완료
   const handleSubmit = async () => {
     const formData = new FormData();
     Object.keys(form).forEach((key) => {
-      if (form[key] != null) formData.append(key, form[key]);
+      // category가 null/빈값이면 '기타'로!
+      if (key === "category" && (!form[key] || form[key].trim() === "")) {
+        formData.append(key, "기타");
+      } else if (form[key] != null) {
+        formData.append(key, form[key]);
+      }
     });
+
     try {
       const res = await fetch(`/api/lost-items/${id}`, {
         method: "PATCH",
@@ -84,14 +93,15 @@ export default function EditLostItemPage() {
     }
   };
 
+  // 초기화(원본으로 복원)
   const handleCancel = () => {
     if (!originalForm) return;
     setForm({
-      title: originalForm.title,
-      location: originalForm.location,
-      date: originalForm.date.split("T")[0],
-      description: originalForm.description,
-      category: originalForm.category,
+      title: originalForm.title || "",
+      location: originalForm.location || "",
+      date: originalForm.date ? originalForm.date.split("T")[0] : "",
+      description: originalForm.description || "",
+      category: originalForm.category || "기타",
       image: null,
     });
     setPreview(originalForm.image);
@@ -106,10 +116,20 @@ export default function EditLostItemPage() {
 
       <div className="edit-lost-form">
         <label>{t("titleLabel")}</label>
-        <input name="title" value={form.title} onChange={handleChange} />
+        <input
+          name="title"
+          value={form.title}
+          onChange={handleChange}
+          required
+        />
 
         <label>{t("locationLabel")}</label>
-        <input name="location" value={form.location} onChange={handleChange} />
+        <input
+          name="location"
+          value={form.location}
+          onChange={handleChange}
+          required
+        />
 
         <label>{t("dateLabel")}</label>
         <input
@@ -117,6 +137,7 @@ export default function EditLostItemPage() {
           name="date"
           value={form.date}
           onChange={handleChange}
+          required
         />
 
         <label>{t("descriptionLabel")}</label>
@@ -124,16 +145,17 @@ export default function EditLostItemPage() {
           name="description"
           value={form.description}
           onChange={handleChange}
+          required
         />
 
         <label>{t("categoryLabel")}</label>
         <select
           name="category"
-          value={form.category}
+          value={form.category || "기타"}
           onChange={handleChange}
+          required
         >
-          {/* "전체" 카테고리는 등록/수정용에서는 제외하고, 목록/검색용에서만 사용하세요 */}
-          {CATEGORY_LIST.filter(cat => cat !== "전체").map((cat) => (
+          {CATEGORY_LIST.map((cat) => (
             <option key={cat} value={cat}>
               {cat}
             </option>
@@ -149,8 +171,12 @@ export default function EditLostItemPage() {
         />
 
         <div className="edit-lost-btn-group">
-          <button type="button" onClick={handleCancel}>{t("resetButton")}</button>
-          <button type="button" onClick={handleSubmit}>{t("saveButton")}</button>
+          <button type="button" onClick={handleCancel}>
+            {t("resetButton")}
+          </button>
+          <button type="button" onClick={handleSubmit}>
+            {t("saveButton")}
+          </button>
         </div>
 
         {preview && (

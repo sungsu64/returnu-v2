@@ -321,6 +321,8 @@ saveButton: "수정 완료",
 editFoundTitle: "습득물 수정",
 statusUnclaimedBadge: "미수령",
     statusClaimedBadge: "수령완료",
+    editSuccess: "수정이 완료되었습니다!",
+
 
     // 폼 단일 추가
     categoryPlaceholder: "카테고리 선택",
@@ -651,6 +653,7 @@ editLostTitle: "Edit Lost Item",
     editFoundTitle: "Edit Found Item",
     statusUnclaimedBadge: "Unclaimed",
     statusClaimedBadge: "Claimed",
+    editSuccess: "Edit completed!",
 
     
 
