@@ -17,7 +17,7 @@ export default function LostCreatePage() {
     location: "",
     date: "",
     description: "",
-    category: "",
+    category: "기타",   // ← 기본값 "기타"로!
     image: null,
   });
   const [preview, setPreview] = useState(null);
@@ -54,10 +54,14 @@ export default function LostCreatePage() {
     if (!form.title.trim())      return setError(t("itemNameRequired"));
     if (!form.location.trim())   return setError(t("locationRequired"));
     if (!form.date)              return setError(t("dateRequired"));
-    if (!form.category) return setError(t("categoryRequired"));
+    // category는 항상 값이 있으니 체크 안 해도 됨
 
     const formData = new FormData();
-    Object.entries(form).forEach(([k, v]) => v && formData.append(k, v));
+    Object.entries(form).forEach(([k, v]) => {
+      // image 필드는 null이 아닌 경우만 추가
+      if (k === "image" && !v) return;
+      formData.append(k, v);
+    });
     if (user?.student_id) {
       formData.append("student_id", user.student_id);
     }
@@ -86,7 +90,7 @@ export default function LostCreatePage() {
       location: "",
       date: "",
       description: "",
-      category: "",
+      category: "기타",  // ← 초기화도 기본값!
       image: null,
     });
     setPreview(null);
@@ -137,12 +141,12 @@ export default function LostCreatePage() {
 
         <label className="input-label">{t("selectCategory")} *</label>
         <select
-      name="category"
-    className="input"
-    value={form.category}
-    onChange={handleChange}
-    >
-+   <option value="">{t("selectCategory")}</option>
+          name="category"
+          className="input"
+          value={form.category}
+          onChange={handleChange}
+          required
+        >
           {CATEGORY_LIST.map((cat) => (
             <option key={cat} value={cat}>{cat}</option>
           ))}

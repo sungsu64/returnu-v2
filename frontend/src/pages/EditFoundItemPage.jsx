@@ -70,7 +70,7 @@ export default function EditFoundItemPage() {
     });
     try {
       const res = await fetch(`/api/lost_requests/${id}`, {
-        method: "PATCH",
+        method: "PUT",
         body: fd,
       });
       if (!res.ok) throw new Error(t("editFailed"));
