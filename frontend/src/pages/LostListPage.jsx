@@ -183,8 +183,8 @@ export default function LostListPage() {
             minWidth:    "120px"
           }}
         >
-          <option value="desc">{t("sortNew")}</option>
-          <option value="asc">{t("sortOld")}</option>
+          <option value="desc">🆕 {t("sortNew")}</option>
+          <option value="asc">📅 {t("sortOld")}</option>
         </select>
         <select
           value={status}
@@ -199,9 +199,9 @@ export default function LostListPage() {
             minWidth:    "120px"
           }}
         >
-          <option value="all">{t("statusAll")}</option>
-          <option value="unclaimed">{t("statusUnclaimed")}</option>
-          <option value="claimed">{t("statusClaimed")}</option>
+          <option value="all">📋 {t("statusAll")}</option>
+          <option value="unclaimed">📦 {t("statusUnclaimed")}</option>
+          <option value="claimed">✅ {t("statusClaimed")}</option>
         </select>
       </div>
 
@@ -233,6 +233,13 @@ export default function LostListPage() {
           </div>
           <div className="lost-item-body">
             <h3 className="lost-item-title">{item.title}</h3>
+            {/* 상태별 이모지/텍스트 */}
+            <div style={{marginBottom: 4}}>
+              {item.claimed_by
+                ? <span style={{color: "#43a047", fontWeight: 600}}>✅ {t("statusClaimedBadge")}</span>
+                : <span style={{color: "#d32f2f", fontWeight: 600}}>📦 {t("statusUnclaimedBadge")}</span>
+              }
+            </div>
             <p className="meta">📍 {item.location}</p>
             <p className="meta">🗓 {formatDate(item.date)}</p>
             <p

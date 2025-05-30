@@ -195,37 +195,43 @@ app.post("/api/lost-requests", upload.single("image"), (req, res) => {
 });
 
 // 🔽 이하 동일한 API들 그대로 유지 (생략 없음)
-app.get("/api/lost-items", (req, res) => {
-  const limit = parseInt(req.query.limit) || 4;
-  const query = `
-    SELECT id, title, location, date, description, image, claimed_by
+app.get("/api/lost-items/search", (req, res) => {
+  const query = req.query.query || "";
+  const cat = req.query.cat || "전체";
+  const status = req.query.status || "전체";
+  const order = req.query.order === "asc" ? "ASC" : "DESC";
+  const likeQuery = `%${query}%`;
+  let sql = `
+    SELECT id, title, location, date, claimed_by, image, created_at
     FROM lost_items
-    WHERE claimed_by IS NULL OR claimed_by = ''
-    ORDER BY id DESC LIMIT ?
+    WHERE title LIKE ?
   `;
-  connection.query(query, [limit], (err, results) => {
-    if (err) return res.status(500).send("서버 에러");
-    res.json(results);
-  });
-});
+  const values = [likeQuery];
 
-app.post("/api/lost-items", upload.single("image"), (req, res) => {
-  const { title, location, date, description, category, student_id } = req.body;
-  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
-
-  if (!title || !location || !date || !category) {
-    return res.status(400).json({ error: "필수 항목이 누락되었습니다." });
+  // 카테고리 필터 (all/전체 제외)
+  if (cat !== "전체" && cat !== "all") {
+    sql += ` AND category = ?`;
+    values.push(cat);
   }
 
-  const sql = `
-    INSERT INTO lost_items (title, location, date, description, category, image, student_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `;
-  const values = [title, location, date, description, category, imagePath, student_id];
+  // 상태 필터 (영문/한글 모두 지원)
+  if (
+    status === "미수령" ||
+    status.toLowerCase() === "unclaimed"
+  ) {
+    sql += ` AND (claimed_by IS NULL OR claimed_by = '')`;
+  } else if (
+    status === "수령완료" ||
+    status.toLowerCase() === "claimed"
+  ) {
+    sql += ` AND claimed_by IS NOT NULL AND claimed_by != ''`;
+  }
 
-  connection.query(sql, values, (err, result) => {
-    if (err) return res.status(500).json({ error: "서버 오류" });
-    res.status(201).json({ message: "등록 성공", id: result.insertId });
+  sql += ` ORDER BY date ${order}`;
+  
+  connection.query(sql, values, (err, results) => {
+    if (err) return res.status(500).send("서버 에러");
+    res.json(results);
   });
 });
 

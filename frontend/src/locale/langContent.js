@@ -319,6 +319,8 @@ editLostTitle: "분실물 수정",
 photoLabel: "사진",
 saveButton: "수정 완료",
 editFoundTitle: "습득물 수정",
+statusUnclaimedBadge: "미수령",
+    statusClaimedBadge: "수령완료",
 
     // 폼 단일 추가
     categoryPlaceholder: "카테고리 선택",
@@ -647,6 +649,8 @@ editLostTitle: "Edit Lost Item",
     photoLabel: "Photo",
     saveButton: "Save Changes",
     editFoundTitle: "Edit Found Item",
+    statusUnclaimedBadge: "Unclaimed",
+    statusClaimedBadge: "Claimed",
 
     
 

@@ -136,7 +136,7 @@ export default function FoundDetailPage() {
             <div className="found-detail-claim-input">
               <input
                 type="text"
-                placeholder={t("inputClaimPlaceholder")}
+                placeholder={t("이름을 입력하세요")}
                 value={claimedName}
                 onChange={(e) => setClaimedName(e.target.value)}
               />
