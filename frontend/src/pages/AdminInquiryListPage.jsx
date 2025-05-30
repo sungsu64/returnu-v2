@@ -1,8 +1,11 @@
+// src/pages/AdminInquiryListPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLang } from "../locale";
 import "../styles/AdminInquiryListPage.css";
 
 export default function AdminInquiryListPage() {
+  const { t } = useLang();
   const navigate = useNavigate();
   const [inquiries, setInquiries] = useState([]);
   const [error, setError] = useState(null);
@@ -11,44 +14,40 @@ export default function AdminInquiryListPage() {
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (!stored) {
-      alert("로그인이 필요합니다.");
+      alert(t("loginRequired"));
       navigate("/login");
       return;
     }
-
     const { role } = JSON.parse(stored);
     if (role !== "admin") {
-      alert("관리자만 접근 가능합니다.");
+      alert(t("adminOnly"));
       navigate("/");
       return;
     }
 
     fetch(`/api/inquiries`)
       .then((res) => {
-        if (!res.ok) throw new Error("서버 오류");
+        if (!res.ok) throw new Error(t("serverError"));
         return res.json();
       })
       .then((data) => setInquiries(data))
-      .catch((err) => {
-        console.error("❌ 전체 문의 목록 불러오기 실패:", err);
-        setError("문의 목록을 불러올 수 없습니다.");
-      })
+      .catch(() => setError(t("loadInquiriesFailed")))
       .finally(() => setLoading(false));
-  }, [navigate]);
+  }, [navigate, t]);
 
   const handleViewDetail = (id) => {
     navigate(`/contact/${id}`);
   };
 
-  if (loading) return <div className="admin-inquiry-wrapper">⏳ 로딩 중...</div>;
+  if (loading) return <div className="admin-inquiry-wrapper">⏳ {t("loading")}</div>;
   if (error) return <div className="admin-inquiry-wrapper error">{error}</div>;
 
   return (
     <div className="admin-inquiry-wrapper">
-      <h2 className="admin-inquiry-title">📋 전체 문의 내역 (관리자 전용)</h2>
+      <h2 className="admin-inquiry-title">📋 {t("adminAllInquiries")}</h2>
 
       {inquiries.length === 0 ? (
-        <p className="admin-inquiry-status">등록된 문의가 없습니다.</p>
+        <p className="admin-inquiry-status">{t("noInquiries")}</p>
       ) : (
         <div className="admin-inquiry-list">
           {inquiries.map((inq) => (

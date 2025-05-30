@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
-import "../styles/NoticeSlider.css"; // ✔︎ 정확한 파일 경로로 수정
+// src/components/NoticeSlider.jsx
+import React, { useEffect, useState } from "react";
+import { useLang } from "../locale";
+import "../styles/NoticeSlider.css";
 
 export default function NoticeSlider({ notices }) {
+  const { t } = useLang();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -15,9 +18,8 @@ export default function NoticeSlider({ notices }) {
 
   return (
     <div className="notice-slider">
-    📢 <strong>{notices[index].title}</strong><br />
-    <span className="notice-content">{notices[index].content}</span>
-  </div>
-  
+      {t("noticeIcon")} <strong>{notices[index].title}</strong><br />
+      <span className="notice-content">{notices[index].content}</span>
+    </div>
   );
 }

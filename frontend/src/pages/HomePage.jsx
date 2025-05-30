@@ -1,39 +1,49 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+// src/pages/HomePage.jsx
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useLang } from "../locale";
 import mainImage from "./assets/main_illustration.png";
 import NoticeSlider from "../components/NoticeSlider";
 import FaqChatbot from "../components/FaqChatbot";
 import "../styles/HomePage.css";
 
-const CATEGORY_LIST = ["전체", "지갑", "휴대폰", "노트북", "이어폰", "열쇠", "기타"];
+const CATEGORY_LIST = ["전체", "전자기기", "의류", "악세서리", "개인소지품", "문서/서류", "기타"];
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { t } = useLang();
+
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("전체");
+  const [category, setCategory] = useState(t("all"));
   const [openCat, setOpenCat] = useState(false);
-  const [selectedType, setSelectedType] = useState("분실물");
+  const [selectedType, setSelectedType] = useState(t("lostTab"));
   const catRef = useRef();
 
   const [notices, setNotices] = useState([]);
   const [, setLoading] = useState(true);
   const [, setError] = useState(null);
 
+  const [isDark, setIsDark] = useState(document.body.classList.contains("dark"));
   useEffect(() => {
-    const onClickOutside = (e) => {
-      if (catRef.current && !catRef.current.contains(e.target)) {
-        setOpenCat(false);
-      }
-    };
-    document.addEventListener("mousedown", onClickOutside);
-    return () => document.removeEventListener("mousedown", onClickOutside);
+    const obs = new MutationObserver(() =>
+      setIsDark(document.body.classList.contains("dark"))
+    );
+    obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    return () => obs.disconnect();
   }, []);
+
+  useEffect(() => {
+    const qp = new URLSearchParams(location.search);
+    setSearch(qp.get("query") || "");
+    setCategory(qp.get("cat") || t("all"));
+  }, [location.search, t]);
 
   useEffect(() => {
     async function fetchNotices() {
       try {
         const res = await fetch("/api/notices");
-        if (!res.ok) throw new Error("공지사항을 불러오지 못했습니다.");
+        if (!res.ok) throw new Error(t("loadNoticesFailed"));
         const data = await res.json();
         setNotices(data);
       } catch (err) {
@@ -43,51 +53,72 @@ export default function HomePage() {
       }
     }
     fetchNotices();
-  }, []);
+  }, [t]);
 
-  const handleSearch = (e) => {
-  e.preventDefault();
-  if (!search.trim()) return;
+  const colors = {
+    bg: isDark ? "#23242c" : "#fafafa",
+    catBg: isDark ? "#35364b" : "#f0f0f0",
+    catText: isDark ? "#ffe4ad" : "#333",
+    catBorder: isDark ? "#393a4b" : "#ccc",
+    dropBg: isDark ? "#232533" : "#fff",
+    dropText: isDark ? "#ffe4ad" : "#333",
+    dropHover: isDark ? "#35364b" : "#f4e7d1",
+    inputBg: isDark ? "#232533" : "#fff",
+    inputText: isDark ? "#ffe4ad" : "#333",
+    inputBorder: isDark ? "#393a4b" : "#ccc",
+    searchBtn: isDark ? "#ffc16c" : "#888",
+    tabBg: isDark ? "#232533" : "#f2f2f2",
+    tabSelected: isDark ? "#ffc16c" : "#d19c66",
+    tabUnselected: "transparent",
+    tabSelectedText: isDark ? "#23242c" : "#fff",
+    tabUnselectedText: isDark ? "#ffe4ad" : "#555",
+  };
 
-  const path = selectedType === "분실물" ? "/lost/list" : "/requests";
-  navigate(`${path}?query=${encodeURIComponent(search)}&cat=${encodeURIComponent(category)}`);
-};
-
+  const handleSearch = e => {
+    e.preventDefault();
+    if (!search.trim()) return;
+    const path = selectedType === t("lostTab") ? "/lost/list" : "/requests";
+    navigate(`${path}?query=${encodeURIComponent(search)}&cat=${encodeURIComponent(category)}`);
+  };
 
   return (
-    <div className="app-wrapper">
+    <div className="app-wrapper" style={{ background: colors.bg, minHeight: "100vh" }}>
       {notices.length > 0 && <NoticeSlider notices={notices} />}
 
       <div style={{
         textAlign: "center",
-        margin: "24px 0 10px 0",
+        margin: "24px 0 10px",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         gap: "10px"
       }}>
-        <img src="https://cdn-icons-png.flaticon.com/512/4783/4783110.png" alt="ReturnU Icon" style={{ width: "30px", height: "30px" }} />
-        <h1 style={{ fontSize: "1.8rem", color: "#d19c66", margin: 0 }}>ReturnU</h1>
+        <img src="https://cdn-icons-png.flaticon.com/512/4783/4783110.png" alt="Icon" style={{ width: 30, height: 30 }} />
+        <h1 style={{ fontSize: "1.8rem", color: isDark ? "#ffc16c" : "#d19c66", margin: 0 }}>
+          ReturnU
+        </h1>
       </div>
 
       <form onSubmit={handleSearch} style={{ maxWidth: "90%", margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
           <div
             ref={catRef}
+            onClick={() => setOpenCat(o => !o)}
             style={{
               padding: "0 12px",
-              background: "#f0f0f0",
-              color: "#333",
+              background: colors.catBg,
+              color: colors.catText,
               fontSize: "0.9rem",
-              height: "48px",
+              height: 48,
               lineHeight: "48px",
-              border: "1px solid #ccc",
+              border: `1px solid ${colors.catBorder}`,
               borderRadius: "8px 0 0 8px",
               cursor: "pointer",
               userSelect: "none",
-              boxSizing: "border-box"
+              minWidth: 110,
+              position: "relative",
+              zIndex: 11
             }}
-            onClick={() => setOpenCat((o) => !o)}
           >
             {category} ▾
             {openCat && (
@@ -96,25 +127,31 @@ export default function HomePage() {
                 top: "100%",
                 left: 0,
                 width: "100%",
-                background: "#fff",
-                border: "1px solid #ccc",
+                background: colors.dropBg,
+                border: `1px solid ${colors.catBorder}`,
                 borderTop: "none",
                 borderRadius: "0 0 8px 8px",
-                maxHeight: "200px",
+                maxHeight: 220,
                 overflowY: "auto",
-                zIndex: 10,
-                padding: 0,
                 margin: 0,
+                padding: 0,
                 listStyle: "none",
+                zIndex: 100
               }}>
-                {CATEGORY_LIST.map((cat) => (
+                {CATEGORY_LIST.map(cat => (
                   <li
                     key={cat}
-                    style={{ padding: "10px 12px", cursor: "pointer", fontSize: "0.9rem" }}
-                    onClick={() => {
-                      setCategory(cat);
-                      setOpenCat(false);
+                    onClick={() => { setCategory(cat); setOpenCat(false); }}
+                    style={{
+                      padding: "12px 16px",
+                      cursor: "pointer",
+                      fontSize: "1rem",
+                      color: colors.dropText,
+                      background: category === cat ? colors.tabBg : "transparent",
+                      transition: "background 0.15s"
                     }}
+                    onMouseOver={e => e.currentTarget.style.background = colors.dropHover}
+                    onMouseOut={e => e.currentTarget.style.background = (category === cat ? colors.tabBg : "transparent")}
                   >
                     {cat}
                   </li>
@@ -123,37 +160,35 @@ export default function HomePage() {
             )}
           </div>
 
-          <div style={{ position: "relative", flex: 1, height: "48px" }}>
+          <div style={{ position: "relative", flex: 1, height: 48 }}>
             <input
               type="text"
-              className="input"
-              placeholder="검색어 입력"
+              placeholder={t("searchPlaceholder")}
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={e => setSearch(e.target.value)}
               style={{
                 width: "100%",
                 height: "100%",
                 padding: "0 48px 0 16px",
                 fontSize: "1rem",
-                border: "1px solid #ccc",
+                border: `1px solid ${colors.inputBorder}`,
                 borderLeft: "none",
                 borderRadius: "0 8px 8px 0",
-                outline: "none",
-                boxSizing: "border-box",
+                background: colors.inputBg,
+                color: colors.inputText,
+                outline: "none"
               }}
             />
             <button type="submit" style={{
               position: "absolute",
-              right: "8px",
+              right: 8,
               top: "50%",
               transform: "translateY(-50%)",
               border: "none",
               background: "transparent",
-              color: "#888",
+              color: colors.searchBtn,
               fontSize: "1.2rem",
               cursor: "pointer",
-              padding: 0,
-              lineHeight: 1,
             }}>🔍</button>
           </div>
         </div>
@@ -162,28 +197,27 @@ export default function HomePage() {
       <div style={{
         display: "flex",
         justifyContent: "center",
-        marginTop: "16px",
-        padding: "4px",
-        borderRadius: "16px",
-        background: "#f2f2f2",
+        marginTop: 16,
+        padding: 4,
+        borderRadius: 16,
+        background: colors.tabBg,
         width: "fit-content",
         marginLeft: "auto",
-        marginRight: "auto",
+        marginRight: "auto"
       }}>
-        {["분실물", "습득물"].map((type) => (
+        {[t("lostTab"), t("foundTab")].map(type => (
           <button
             key={type}
             onClick={() => setSelectedType(type)}
             style={{
               padding: "8px 20px",
-              borderRadius: "16px",
+              borderRadius: 16,
               border: "none",
-              background: selectedType === type ? "#d19c66" : "transparent",
-              color: selectedType === type ? "#fff" : "#555",
+              background: selectedType === type ? colors.tabSelected : colors.tabUnselected,
+              color: selectedType === type ? colors.tabSelectedText : colors.tabUnselectedText,
               fontWeight: "bold",
               fontSize: "0.95rem",
-              cursor: "pointer",
-              transition: "0.2s"
+              cursor: "pointer"
             }}
           >
             {type}
@@ -192,15 +226,15 @@ export default function HomePage() {
       </div>
 
       <div className="home-illustration">
-        <img src={mainImage} alt="메인 일러스트" className="main-image" />
-        <p className="guide-text">분실물을 찾고 있나요?</p>
-        <p className="sub-guide-text">아래 내용을 꼭 읽어주세요!!</p>
+        <img src={mainImage} alt={t("mainIllustrationAlt")} className="main-image" />
+        <p className="guide-text">{t("guideLine1")}</p>
+        <p className="sub-guide-text">{t("guideLine2")}</p>
       </div>
 
       <div className="usage-guide-box">
-        🫁 <strong>ReturnU 사용 가이드</strong><br />
-        🔍 <strong>검색창에</strong> 분실물을 검색해보세요.<br />
-        ➕ 버튼을 누르면 <strong>분실물·습득물 등록</strong>도 할 수 있어요!
+        🫁 <strong>{t("usageGuideTitle")}</strong><br />
+        🔍 <strong>{t("usageGuideSearch")}</strong><br />
+        ➕ {t("usageGuideRegister")}
       </div>
 
       <FaqChatbot />

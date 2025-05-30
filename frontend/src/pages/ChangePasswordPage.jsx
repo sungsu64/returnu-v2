@@ -1,7 +1,10 @@
+// src/pages/ChangePasswordPage.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLang } from "../locale";
 
 export default function ChangePasswordPage() {
+  const { t } = useLang();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -9,68 +12,68 @@ export default function ChangePasswordPage() {
 
   const handleChangePassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      alert("모든 항목을 입력해주세요.");
+      alert(t("allFieldsRequired"));
       return;
     }
-
     if (newPassword !== confirmPassword) {
-      alert("새 비밀번호가 일치하지 않습니다.");
+      alert(t("passwordMismatch"));
       return;
     }
-
     try {
       const user = JSON.parse(localStorage.getItem("user"));
-      const res = await fetch("http://localhost:8090/api/users/change-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          student_id: user.student_id,
-          currentPassword,
-          newPassword,
-        }),
-      });
-
+      const res = await fetch(
+        "http://localhost:8090/api/users/change-password",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            student_id: user.student_id,
+            currentPassword,
+            newPassword,
+          }),
+        }
+      );
       const result = await res.json();
-
       if (res.ok) {
-        alert("비밀번호가 성공적으로 변경되었습니다.");
-        navigate("/my"); // ✅ 성공 시 마이페이지 이동
+        alert(t("passwordChangeSuccess"));
+        navigate("/my");
       } else {
-        alert(result.message || "비밀번호 변경 실패");
+        alert(result.message || t("passwordChangeFail"));
       }
     } catch (err) {
-      alert("오류 발생: " + err.message);
+      alert(t("errorOccurred") + err.message);
     }
   };
 
   return (
     <div style={{ maxWidth: "400px", margin: "0 auto", padding: "20px" }}>
-      <h2>비밀번호 변경</h2>
+      <h2>{t("changePasswordTitle")}</h2>
       <input
         type="password"
-        placeholder="현재 비밀번호"
+        placeholder={t("currentPasswordPlaceholder")}
         value={currentPassword}
         onChange={(e) => setCurrentPassword(e.target.value)}
         style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
       />
       <input
         type="password"
-        placeholder="새 비밀번호"
+        placeholder={t("newPasswordPlaceholder")}
         value={newPassword}
         onChange={(e) => setNewPassword(e.target.value)}
         style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
       />
       <input
         type="password"
-        placeholder="새 비밀번호 확인"
+        placeholder={t("confirmPasswordPlaceholder")}
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
         style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
       />
-      <button onClick={handleChangePassword} style={{ width: "100%", padding: "10px" }}>
-        비밀번호 변경
+      <button
+        onClick={handleChangePassword}
+        style={{ width: "100%", padding: "10px" }}
+      >
+        {t("changePasswordButton")}
       </button>
     </div>
   );

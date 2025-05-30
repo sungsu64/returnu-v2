@@ -1,8 +1,11 @@
+// src/pages/InquiryDetailPage.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useLang } from "../locale";
 import "../styles/InquiryDetailPage.css";
 
 export default function InquiryDetailPage() {
+  const { t } = useLang();
   const { id } = useParams();
   const navigate = useNavigate();
   const [inquiry, setInquiry] = useState(null);
@@ -14,35 +17,31 @@ export default function InquiryDetailPage() {
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
-    if (stored) {
-      setUser(JSON.parse(stored));
-    }
+    if (stored) setUser(JSON.parse(stored));
   }, []);
 
   useEffect(() => {
     async function fetchInquiry() {
       try {
         const res = await fetch(`/api/inquiries/${id}`);
-        if (!res.ok) throw new Error("서버 오류");
+        if (!res.ok) throw new Error(t("serverError"));
         const data = await res.json();
         setInquiry(data);
       } catch (err) {
         console.error("❌ 문의 상세 조회 실패:", err);
-        setError("문의 정보를 불러오지 못했습니다.");
+        setError(t("loadInquiryFailed"));
       } finally {
         setLoading(false);
       }
     }
-
     fetchInquiry();
-  }, [id]);
+  }, [id, t]);
 
   const handleReplySubmit = async () => {
     if (!replyInput.trim()) {
-      alert("답변 내용을 입력해주세요.");
+      alert(t("replyRequired"));
       return;
     }
-
     try {
       setSubmitting(true);
       const res = await fetch(`/api/inquiries/${id}/reply`, {
@@ -50,26 +49,25 @@ export default function InquiryDetailPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reply: replyInput }),
       });
-
-      if (!res.ok) throw new Error("서버 오류");
-      alert("답변이 등록되었습니다.");
+      if (!res.ok) throw new Error(t("serverError"));
+      alert(t("replySuccess"));
       window.location.reload();
     } catch (err) {
       console.error("❌ 답변 등록 실패:", err);
-      alert("답변 등록에 실패했습니다.");
+      alert(t("replyFailed"));
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading) return <div className="inquiry-detail-wrapper">⏳ 로딩 중...</div>;
-  if (error) return <div className="inquiry-detail-wrapper error">{error}</div>;
+  if (loading) return <div className="inquiry-detail-wrapper">⏳ {t("loading")}</div>;
+  if (error)   return <div className="inquiry-detail-wrapper error">{error}</div>;
   if (!inquiry) return null;
 
   return (
     <div className="inquiry-detail-wrapper">
       <button className="inquiry-back-button" onClick={() => navigate(-1)}>
-        ← 목록으로 돌아가기
+        ← {t("backToList")}
       </button>
 
       <div className="inquiry-detail-card">
@@ -77,19 +75,19 @@ export default function InquiryDetailPage() {
 
         <div className="inquiry-info-grid">
           <div>
-            <strong>👤 이름</strong>
+            <strong>👤 {t("nameLabel")}</strong>
             <p>{inquiry.name}</p>
           </div>
           <div>
-            <strong>🎓 학번</strong>
+            <strong>🎓 {t("studentIdLabel")}</strong>
             <p>{inquiry.student_id}</p>
           </div>
           <div>
-            <strong>📧 이메일</strong>
+            <strong>📧 {t("emailLabel")}</strong>
             <p>{inquiry.email}</p>
           </div>
           <div>
-            <strong>📅 작성일</strong>
+            <strong>📅 {t("createdAtLabel")}</strong>
             <p>{new Date(inquiry.created_at).toLocaleString("ko-KR")}</p>
           </div>
         </div>
@@ -97,12 +95,12 @@ export default function InquiryDetailPage() {
         <hr className="inquiry-divider" />
 
         <div className="inquiry-message-section">
-          <h3>📋 문의 내용</h3>
+          <h3>📋 {t("inquiryContent")}</h3>
           <div className="inquiry-message">{inquiry.message}</div>
         </div>
 
         <div className="inquiry-reply-section">
-          <h3>✅ 관리자 답변</h3>
+          <h3>✅ {t("adminReply")}</h3>
           {inquiry.reply ? (
             <div className="inquiry-message">{inquiry.reply}</div>
           ) : user?.role === "admin" ? (
@@ -111,7 +109,7 @@ export default function InquiryDetailPage() {
                 rows={5}
                 value={replyInput}
                 onChange={(e) => setReplyInput(e.target.value)}
-                placeholder="답변 내용을 입력해주세요"
+                placeholder={t("replyPlaceholder")}
                 style={{
                   width: "100%",
                   padding: "12px",
@@ -135,11 +133,11 @@ export default function InquiryDetailPage() {
                   fontWeight: "bold",
                 }}
               >
-                {submitting ? "등록 중..." : "답변 등록"}
+                {submitting ? t("submitting") : t("submitReply")}
               </button>
             </div>
           ) : (
-            <p className="inquiry-no-reply">아직 답변이 등록되지 않았습니다.</p>
+            <p className="inquiry-no-reply">{t("noReplyYet")}</p>
           )}
         </div>
       </div>

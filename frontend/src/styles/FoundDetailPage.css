@@ -1,5 +1,6 @@
 /* FoundDetailPage.css */
 
+/* ===== 라이트모드(기본) ===== */
 .found-detail-wrapper {
   padding: 20px;
   background-color: #fffdfc;
@@ -82,6 +83,21 @@
   cursor: pointer;
 }
 
+.found-detail-back-row {
+  position: relative;
+  width: 100%;
+  padding: 12px 16px 0;
+  box-sizing: border-box;
+}
+.found-detail-back-btn {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
 .found-detail-back {
   margin-top: 24px;
   padding: 10px;
@@ -92,4 +108,81 @@
   font-size: 0.95rem;
   cursor: pointer;
   border: none;
+}
+
+/* 보관 안내 박스 */
+.found-detail-storage-box {
+  margin-top: 20px;
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+.found-detail-storage-row {
+  margin-bottom: 8px;
+}
+.found-detail-storage-desc {
+  color: #999;
+  font-size: 0.9rem;
+}
+
+
+/* ===== 다크모드 오버라이드 ===== */
+body.dark .found-detail-wrapper {
+  background-color: #23242a !important;
+}
+
+body.dark .found-detail-card {
+  background: #262730 !important;
+  color: #f3f3f3 !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18) !important;
+}
+
+body.dark .found-detail-title {
+  color: #ffe0b2 !important;
+}
+
+body.dark .found-detail-meta {
+  color: #a5b6d3 !important;
+}
+
+body.dark .found-detail-description {
+  color: #e0e6f1 !important;
+}
+
+body.dark .found-detail-status {
+  background: #33434f !important;
+  color: #ffd180 !important;
+}
+
+body.dark .found-detail-created {
+  color: #878da4 !important;
+}
+
+body.dark .found-detail-claim-input input {
+  background: #252533 !important;
+  color: #ffe1ac !important;
+  border: 1px solid #44485c !important;
+}
+
+body.dark .found-detail-claim-button {
+  background-color: #ffb781 !important;
+  color: #23242a !important;
+}
+
+body.dark .found-detail-back {
+  background: #252735 !important;
+  color: #ffce81 !important;
+}
+
+body.dark .found-detail-back-btn {
+  color: #aaa !important;
+}
+
+body.dark .found-detail-storage-box {
+  background: #242532 !important;
+  border-color: #333848 !important;
+}
+body.dark .found-detail-storage-desc {
+  color: #777 !important;
 }

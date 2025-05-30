@@ -110,3 +110,58 @@
 .inquiry-back-btn:hover {
   background-color: #e0e0e0;
 }
+
+/* 다크모드 추가 (기존 CSS는 그대로 두고 아래만 추가) */
+
+body.dark .inquiry-wrapper {
+  background: #23242c !important;
+}
+
+body.dark .inquiry-header {
+  color: #ffd377 !important;
+  border-left: 5px solid #4bbaff !important;
+}
+
+body.dark .inquiry-write-btn {
+  background-color: #ffc16c !important;
+  color: #232533 !important;
+}
+
+body.dark .inquiry-write-btn:hover {
+  background-color: #ffd377 !important;
+}
+
+body.dark .inquiry-status {
+  color: #bbb !important;
+}
+body.dark .inquiry-status.error {
+  color: #ff7d7d !important;
+}
+
+body.dark .inquiry-list {
+  /* 카드 배경이 있으므로 필요없음 */
+}
+
+body.dark .inquiry-card {
+  background-color: #22242b !important;
+  border: 1px solid #343850 !important;
+  border-left: 5px solid #4bbaff !important;
+}
+
+body.dark .inquiry-title {
+  color: #ffd377 !important;
+}
+body.dark .inquiry-date {
+  color: #aaa !important;
+}
+body.dark .inquiry-meta {
+  color: #ffe4ad !important;
+}
+
+body.dark .inquiry-back-btn {
+  background-color: #383a4c !important;
+  color: #ffd377 !important;
+}
+body.dark .inquiry-back-btn:hover {
+  background-color: #232533 !important;
+}

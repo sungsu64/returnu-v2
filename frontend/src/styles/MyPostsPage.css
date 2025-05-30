@@ -121,3 +121,64 @@
 .back-btn:hover {
   background-color: #e0e0e0;
 }
+
+/* 다크모드 전용 추가 (기존은 그대로 두세요) */
+
+body.dark .my-posts-wrapper {
+  background-color: #23242c !important;
+}
+
+body.dark .my-posts-title-main {
+  color: #ffe4ad !important;
+}
+
+body.dark .my-posts-tabs {
+  /* 배경 필요시 여기에도 넣어도 됨 */
+}
+
+body.dark .my-posts-tab-btn {
+  background-color: #272836 !important;
+  color: #ffe4ad !important;
+}
+body.dark .my-posts-tab-btn.active {
+  background-color: #ffc16c !important;
+  color: #222 !important;
+}
+
+body.dark .my-posts-list {
+  /* 카드 배경으로 인해 필요없음 */
+}
+
+body.dark .my-post-card.upgraded {
+  background-color: #242531 !important;
+  color: #f3f3f3 !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.13) !important;
+}
+
+body.dark .post-title {
+  color: #ffe4ad !important;
+}
+body.dark .post-date {
+  color: #aaa !important;
+}
+
+body.dark .edit-btn {
+  background-color: #514c39 !important;
+  color: #ffd670 !important;
+}
+body.dark .delete-btn {
+  background-color: #633d3d !important;
+  color: #ffa4a4 !important;
+}
+
+body.dark .my-posts-empty {
+  color: #aaa !important;
+}
+
+body.dark .back-btn {
+  background-color: #2c2d3a !important;
+  color: #ffe4ad !important;
+}
+body.dark .back-btn:hover {
+  background-color: #34354b !important;
+}

@@ -1,9 +1,21 @@
-import React, { useState, useEffect } from "react";
+// src/pages/LostRequestPage.jsx
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLang } from "../locale";
 import "../styles/LostRequestPage.css";
+
+const CATEGORY_LIST = [
+  "전자기기",
+  "의류",
+  "악세서리",
+  "개인소지품",
+  "문서/서류",
+  "기타"
+];
 
 export default function LostRequestPage() {
   const navigate = useNavigate();
+  const { t } = useLang();
 
   const [form, setForm] = useState({
     title: "",
@@ -14,32 +26,32 @@ export default function LostRequestPage() {
     phone: "",
     email: "",
     image: null,
-    student_id: "", // ✅ 학번 필드 추가
+    student_id: "",
   });
 
+  // 로그인 체크 & student_id 동기화
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (stored) {
       const user = JSON.parse(stored);
-      setForm((prev) => ({ ...prev, student_id: user.student_id }));
+      setForm(f => ({ ...f, student_id: user.student_id }));
     } else {
-      alert("로그인이 필요합니다.");
+      alert(t("loginRequired"));
       navigate("/login");
     }
-  }, [navigate]);
+  }, [navigate, t]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm(f => ({ ...f, [name]: value }));
   };
 
   const handleFileChange = (e) => {
-    setForm({ ...form, image: e.target.files[0] });
+    setForm(f => ({ ...f, image: e.target.files[0] }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (
       !form.title ||
       !form.date ||
@@ -47,89 +59,106 @@ export default function LostRequestPage() {
       !form.description ||
       (!form.phone && !form.email)
     ) {
-      alert("모든 필수 항목을 입력해주세요. (전화번호 또는 이메일은 하나 이상 필수)");
+      alert(t("fillRequiredFields"));
       return;
     }
 
     const formData = new FormData();
-    for (let key in form) {
-      if (form[key]) formData.append(key, form[key]);
-    }
+    Object.entries(form).forEach(([k, v]) => {
+      if (v) formData.append(k, v);
+    });
 
     try {
       const res = await fetch("http://localhost:8090/api/lost-requests", {
         method: "POST",
         body: formData,
       });
-      if (!res.ok) throw new Error("등록 실패");
-      alert("요청이 등록되었습니다!");
+      if (!res.ok) throw new Error(t("submitFailed"));
+      alert(t("requestCreated"));
       navigate("/");
     } catch (err) {
-      alert("에러 발생: " + err.message);
+      alert(t("errorOccurred") + err.message);
     }
   };
 
   return (
     <div className="lost-request-wrapper">
-      <h2>📝 물건을 찾아주세요!</h2>
+      <h2>📝 {t("lostRequestTitle")}</h2>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <label>제목</label>
+        <label>{t("titleLabel")}</label>
         <input
           name="title"
           value={form.title}
           onChange={handleChange}
-          placeholder="예: 검정색 지갑을 잃어버렸어요"
+          placeholder={t("exampleTitle")}
         />
 
-        <label>분실 날짜</label>
-        <input type="date" name="date" value={form.date} onChange={handleChange} />
+        <label>{t("lostDate")}</label>
+        <input
+          type="date"
+          name="date"
+          value={form.date}
+          onChange={handleChange}
+        />
 
-        <label>분실 장소</label>
+        <label>{t("lostLocation")}</label>
         <input
           name="location"
           value={form.location}
           onChange={handleChange}
-          placeholder="예: 학생회관, 도서관"
+          placeholder={t("locationPlaceholder")}
         />
 
-        <label>분류</label>
-        <select name="category" value={form.category} onChange={handleChange}>
-          <option value="지갑">지갑</option>
-          <option value="노트북">노트북</option>
-          <option value="휴대폰">휴대폰</option>
-          <option value="이어폰">이어폰</option>
-          <option value="기타">기타</option>
+        <label>{t("categoryLabel")}</label>
+        <select
+          name="category"
+          value={form.category}
+          onChange={handleChange}
+        >
+          <option value="">{t("selectCategory")}</option>
+          {CATEGORY_LIST.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
         </select>
 
-        <label>상세 설명</label>
+        <label>{t("descriptionLabel")}</label>
         <textarea
           name="description"
           value={form.description}
           onChange={handleChange}
           rows="4"
-          placeholder="잃어버린 상황을 최대한 자세히 적어주세요"
+          placeholder={t("descriptionPlaceholder")}
         />
 
-        <label>전화번호</label>
+        <label>{t("phoneLabel")}</label>
         <input
           name="phone"
           value={form.phone}
           onChange={handleChange}
-          placeholder="010-1234-5678"
+          placeholder={t("phonePlaceholder")}
         />
 
-        <label>이메일</label>
+        <label>{t("emailLabel")}</label>
         <input
           name="email"
           value={form.email}
           onChange={handleChange}
-          placeholder="email@example.com"
+          placeholder={t("emailPlaceholder")}
         />
 
-        <label>사진 첨부 (선택)</label>
-        <input type="file" name="image" accept="image/*" onChange={handleFileChange} />
+        <label>{t("photoOptional")}</label>
+        <input
+          type="file"
+          name="image"
+          accept="image/*"
+          onChange={handleFileChange}
+        />
 
-        <button type="submit" className="btn-submit">게시글 등록</button>
+        <button type="submit" className="btn-submit">
+          {t("submitPost")}
+        </button>
       </form>
     </div>
   );

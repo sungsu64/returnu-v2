@@ -71,3 +71,45 @@
   margin-top: 40px;
   color: #888;
 }
+
+/* 다크모드 전용 추가 (기존 CSS는 그대로 두세요) */
+
+body.dark .request-list-wrapper {
+  background-color: #23242c !important;
+}
+
+body.dark .request-list-title {
+  color: #ffd377 !important;
+}
+
+body.dark .request-card {
+  background: #232533 !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.14) !important;
+}
+
+body.dark .request-thumb img {
+  background: #383a4c !important;
+}
+
+body.dark .request-info h3 {
+  color: #ffd377 !important;
+}
+
+body.dark .request-info p {
+  color: #eee0c4 !important;
+}
+
+body.dark .desc {
+  color: #ffc16c !important;
+}
+
+body.dark .contact {
+  color: #ffe4ad !important;
+}
+
+body.dark .loading-text,
+body.dark .empty-text,
+body.dark .error-text {
+  color: #aaa !important;
+}
+

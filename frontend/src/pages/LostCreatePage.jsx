@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from "react";
+// src/pages/LostCreatePage.jsx
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLang } from "../locale";
 import "../mobile-ui.css";
+
+// 카테고리 리스트
+const CATEGORY_LIST = ["전자기기", "의류", "악세서리", "개인소지품", "문서/서류", "기타"];
 
 export default function LostCreatePage() {
   const navigate = useNavigate();
+  const { t } = useLang();
+
   const [user, setUser] = useState(null);
   const [form, setForm] = useState({
     title: "",
@@ -17,19 +24,20 @@ export default function LostCreatePage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // 로그인 체크
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (stored) {
       setUser(JSON.parse(stored));
     } else {
-      alert("로그인이 필요합니다.");
+      alert(t("loginRequired"));
       navigate("/login");
     }
-  }, [navigate]);
+  }, [navigate, t]);
 
+  // 입력 변경 핸들러
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-
     if (name === "image") {
       const file = files[0];
       setForm((prev) => ({ ...prev, image: file }));
@@ -37,24 +45,19 @@ export default function LostCreatePage() {
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
     }
-
     setError("");
   };
 
+  // 제출 핸들러
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!form.title.trim()) return setError("물건 이름을 입력해주세요.");
-    if (!form.location.trim()) return setError("분실 장소를 입력해주세요.");
-    if (!form.date) return setError("분실 날짜를 선택해주세요.");
-    if (!form.category) return setError("카테고리를 선택해주세요.");
+    if (!form.title.trim())      return setError(t("itemNameRequired"));
+    if (!form.location.trim())   return setError(t("locationRequired"));
+    if (!form.date)              return setError(t("dateRequired"));
+    if (!form.category) return setError(t("categoryRequired"));
 
     const formData = new FormData();
-    for (const key in form) {
-      if (form[key]) formData.append(key, form[key]);
-    }
-
-    // ✅ student_id는 별도로 직접 append (이게 핵심!)
+    Object.entries(form).forEach(([k, v]) => v && formData.append(k, v));
     if (user?.student_id) {
       formData.append("student_id", user.student_id);
     }
@@ -65,19 +68,18 @@ export default function LostCreatePage() {
         method: "POST",
         body: formData,
       });
-
-      if (!res.ok) throw new Error("등록 실패");
+      if (!res.ok) throw new Error();
       const result = await res.json();
-
-      alert("분실물 등록 완료!");
+      alert(t("createSuccess"));
       navigate(`/found/${result.id}`);
-    } catch (err) {
-      alert("에러 발생: " + err.message);
+    } catch {
+      alert(t("createFailed"));
     } finally {
       setIsLoading(false);
     }
   };
 
+  // 초기화
   const handleReset = () => {
     setForm({
       title: "",
@@ -93,11 +95,11 @@ export default function LostCreatePage() {
 
   return (
     <div className="app-wrapper">
-      <h1 className="title">📮 분실물 등록</h1>
+      <h1 className="title">📮 {t("lostCreateTitle")}</h1>
 
       <form onSubmit={handleSubmit} style={{ padding: "0 16px" }}>
         <p style={{ fontSize: "0.9rem", color: "#999", marginBottom: "12px" }}>
-          * 필수 항목은 모두 입력해야 합니다.
+          * {t("requiredNotice")}
         </p>
 
         {error && (
@@ -106,60 +108,57 @@ export default function LostCreatePage() {
           </p>
         )}
 
-        <label className="input-label">물건 이름 *</label>
+        <label className="input-label">{t("itemNameLabel")} *</label>
         <input
           className="input"
           name="title"
-          placeholder="예: 검정색 지갑"
+          placeholder={t("itemNamePlaceholder")}
           value={form.title}
           onChange={handleChange}
         />
 
-        <label className="input-label">분실 장소 *</label>
+        <label className="input-label">{t("locationLabel")} *</label>
         <input
           className="input"
           name="location"
-          placeholder="예: 도서관 2층"
+          placeholder={t("locationPlaceholder")}
           value={form.location}
           onChange={handleChange}
         />
 
-        <label className="input-label">분실 날짜 *</label>
+        <label className="input-label">{t("dateLabel")} *</label>
         <input
           className="input"
-          name="date"
           type="date"
+          name="date"
           value={form.date}
           onChange={handleChange}
         />
 
-        <label className="input-label">카테고리 *</label>
+        <label className="input-label">{t("selectCategory")} *</label>
         <select
-          name="category"
-          className="input"
-          value={form.category}
-          onChange={handleChange}
-        >
-          <option value="">카테고리 선택</option>
-          <option value="지갑">지갑</option>
-          <option value="휴대폰">휴대폰</option>
-          <option value="노트북">노트북</option>
-          <option value="이어폰">이어폰</option>
-          <option value="열쇠">열쇠</option>
-          <option value="기타">기타</option>
+      name="category"
+    className="input"
+    value={form.category}
+    onChange={handleChange}
+    >
++   <option value="">{t("selectCategory")}</option>
+          {CATEGORY_LIST.map((cat) => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
         </select>
 
-        <label className="input-label">자세한 설명</label>
+        <label className="input-label">{t("descriptionLabel")}</label>
         <textarea
           className="input"
           name="description"
-          placeholder="특징, 색상, 브랜드 등"
+          placeholder={t("descriptionPlaceholder")}
           rows="4"
           value={form.description}
           onChange={handleChange}
         />
 
-        <label className="input-label">사진 업로드</label>
+        <label className="input-label">{t("photoOptional")}</label>
         <input
           className="input"
           type="file"
@@ -170,10 +169,12 @@ export default function LostCreatePage() {
 
         {preview && (
           <div style={{ marginTop: "12px" }}>
-            <p style={{ fontSize: "0.85rem", color: "#888" }}>📷 업로드된 이미지</p>
+            <p style={{ fontSize: "0.85rem", color: "#888" }}>
+              📷 {t("previewLabel")}
+            </p>
             <img
               src={preview}
-              alt="미리보기"
+              alt={t("previewAlt")}
               style={{
                 width: "100%",
                 maxHeight: "240px",
@@ -191,7 +192,7 @@ export default function LostCreatePage() {
           disabled={isLoading}
           style={{ opacity: isLoading ? 0.6 : 1, marginTop: "20px" }}
         >
-          {isLoading ? "등록 중..." : "등록하기"}
+          {isLoading ? t("creating") : t("createButton")}
         </button>
 
         <button
@@ -207,7 +208,7 @@ export default function LostCreatePage() {
             cursor: "pointer",
           }}
         >
-          초기화
+          {t("resetButton")}
         </button>
       </form>
     </div>

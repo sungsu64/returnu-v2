@@ -7,10 +7,10 @@ import LostListPage from "./pages/LostListPage";
 import LostCreatePage from "./pages/LostCreatePage";
 import FoundDetailPage from "./pages/FoundDetailPage";
 import ClaimPage from "./pages/ClaimPage";
-import MyPage from "./pages/MyPage"; // ✅ 내 정보 페이지 추가
-import NavBar from "./components/NavBar"; // 하단 내비게이션 바
+import MyPage from "./pages/MyPage";
+import NavBar from "./components/NavBar";
 import "./mobile-ui.css";
-import LoginPage from "./pages/LoginPage"; // ✅ 로그인 페이지 import 추가
+import LoginPage from "./pages/LoginPage";
 import LostRequestPage from "./pages/LostRequestPage";
 import LostRequestListPage from "./pages/LostRequestListPage";
 import NoticeManagerPage from "./pages/NoticeManagerPage";
@@ -22,7 +22,7 @@ import MessageDetailPage from "./pages/MessageDetailPage";
 import SendMessagePage from "./pages/SendMessagePage";
 import InquiryListPage from "./pages/InquiryListPage";
 import InquiryDetailPage from "./pages/InquiryDetailPage";
-import ContactPage from "./pages/ContactPage"; // 기존 문의작성
+import ContactPage from "./pages/ContactPage";
 import AdminInquiryListPage from "./pages/AdminInquiryListPage";
 import MyPostsPage from "./pages/MyPostsPage";
 import AdminPostsPage from "./pages/AdminPostsPage";
@@ -34,13 +34,12 @@ import EditInquiryPage from "./pages/EditInquiryPage";
 import EditFoundItemPage from "./pages/EditFoundItemPage";
 import EditLostItemPage from "./pages/EditLostItemPage";
 
-
-
 function App() {
   return (
     <BrowserRouter>
       <div className="app-wrapper">
         <Routes>
+          {/* 여기에 모든 Route 정의 */}
           <Route path="/" element={<HomePage />} />
           <Route path="/lost/list" element={<LostListPage />} />
           <Route path="/lost/create" element={<LostCreatePage />} />
@@ -70,18 +69,11 @@ function App() {
           <Route path="/edit/문의하기/:id" element={<EditInquiryPage />} />
           <Route path="/edit/습득물/:id" element={<EditFoundItemPage />} />
           <Route path="/edit/분실물/:id" element={<EditLostItemPage />} />
-
-          
-          
-
-
         </Routes>
       </div>
-
-      <NavBar /> {/* ✅ app-wrapper 바깥으로 이동 */}
+      <NavBar />
     </BrowserRouter>
   );
 }
-
 
 export default App;

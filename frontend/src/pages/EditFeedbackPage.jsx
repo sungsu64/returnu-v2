@@ -1,23 +1,29 @@
+// src/pages/EditFeedbackPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useLang } from "../locale";
 import "../styles/EditFeedbackPage.css";
 
 export default function EditFeedbackPage() {
+  const { t } = useLang();
   const { id } = useParams();
   const navigate = useNavigate();
   const [content, setContent] = useState("");
 
   useEffect(() => {
     fetch(`/api/feedbacks/${id}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(t("loadFeedbackError"));
+        return res.json();
+      })
       .then((data) => {
         setContent(data.content || "");
       })
       .catch((err) => {
-        console.error("❌ 피드백 불러오기 실패:", err);
-        alert("피드백을 불러오지 못했습니다.");
+        console.error(err);
+        alert(t("loadFeedbackError"));
       });
-  }, [id]);
+  }, [id, t]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,20 +33,20 @@ export default function EditFeedbackPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content }),
       });
-      if (!res.ok) throw new Error();
-      alert("수정이 완료되었습니다.");
+      if (!res.ok) throw new Error(t("editFailed"));
+      alert(t("editSuccess"));
       navigate("/myposts");
     } catch {
-      alert("수정 중 문제가 발생했습니다.");
+      alert(t("editError"));
     }
   };
 
   return (
     <div className="edit-feedback-wrapper">
-      <h1 className="edit-feedback-title">📝 피드백 수정</h1>
+      <h1 className="edit-feedback-title">📝 {t("editFeedbackTitle")}</h1>
       <form className="edit-feedback-form" onSubmit={handleSubmit}>
         <label>
-          내용
+          {t("messageLabel")}
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
@@ -48,8 +54,16 @@ export default function EditFeedbackPage() {
           />
         </label>
         <div className="edit-feedback-btns">
-          <button type="submit" className="btn submit">✅ 수정</button>
-          <button type="button" className="btn back" onClick={() => navigate(-1)}>🔙 뒤로가기</button>
+          <button type="submit" className="btn submit">
+            ✅ {t("saveButton")}
+          </button>
+          <button
+            type="button"
+            className="btn back"
+            onClick={() => navigate(-1)}
+          >
+            🔙 {t("back")}
+          </button>
         </div>
       </form>
     </div>

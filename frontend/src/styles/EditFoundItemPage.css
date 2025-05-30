@@ -94,3 +94,55 @@
   background-color: #9e9e9e;
   color: white;
 }
+
+/* ===== 다크모드 오버라이드 (edit-found-wrapper) ===== */
+body.dark .edit-found-wrapper {
+  background-color: #22242b !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.22) !important;
+}
+
+body.dark .edit-found-title {
+  color: #ffcb74 !important;
+}
+
+body.dark .edit-found-form label {
+  color: #ffe0b2 !important;
+}
+
+body.dark .edit-found-form input,
+body.dark .edit-found-form select,
+body.dark .edit-found-form textarea {
+  background: #232533 !important;
+  color: #ffe1ac !important;
+  border: 1.2px solid #44485c !important;
+}
+
+body.dark .edit-found-form input:focus,
+body.dark .edit-found-form select:focus,
+body.dark .edit-found-form textarea:focus {
+  border-color: #ffce81 !important;
+  background: #292a36 !important;
+}
+
+body.dark .edit-found-preview {
+  background: #252735 !important;
+  border-color: #353750 !important;
+}
+
+body.dark .edit-found-btns .btn {
+  background: #383a4c !important;
+  color: #ffce81 !important;
+}
+
+body.dark .edit-found-btns .edit {
+  background-color: #388e3c !important;
+  color: #fff !important;
+}
+body.dark .edit-found-btns .reset {
+  background-color: #ff9800 !important;
+  color: #fff !important;
+}
+body.dark .edit-found-btns .back {
+  background-color: #607d8b !important;
+  color: #fff !important;
+}

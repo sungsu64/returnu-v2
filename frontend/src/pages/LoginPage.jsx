@@ -1,43 +1,42 @@
 // src/pages/LoginPage.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLang } from "../locale";
 
 export default function LoginPage() {
   const [studentId, setStudentId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { t } = useLang();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
-
     try {
       const res = await fetch("http://localhost:8090/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ student_id: studentId, password }),
       });
-
-      if (!res.ok) throw new Error("로그인 실패");
-
+      if (!res.ok) throw new Error(t("loginFailed"));
       const { user } = await res.json();
       localStorage.setItem("user", JSON.stringify(user));
-      alert("로그인 성공!");
+      alert(t("loginSuccess"));
       navigate("/my");
     } catch (err) {
-      setError("❌ 로그인 실패: 아이디 또는 비밀번호를 확인하세요.");
+      setError(t("loginError"));
     }
   };
 
   return (
     <div className="app-wrapper">
-      <h1 className="title">🔐 로그인</h1>
+      <h1 className="title">🔐 {t("loginTitle")}</h1>
       <form onSubmit={handleLogin} style={{ padding: "16px" }}>
         <input
           className="input"
           type="text"
-          placeholder="학번 (숫자만)"
+          placeholder={t("loginIdPlaceholder")}
           value={studentId}
           onChange={(e) => setStudentId(e.target.value)}
           required
@@ -45,15 +44,17 @@ export default function LoginPage() {
         <input
           className="input"
           type="password"
-          placeholder="비밀번호"
+          placeholder={t("loginPwPlaceholder")}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
         <button className="btn-primary" type="submit">
-          로그인
+          {t("loginButton")}
         </button>
-        {error && <p style={{ color: "red", marginTop: "12px" }}>{error}</p>}
+        {error && (
+          <p style={{ color: "red", marginTop: "12px" }}>{error}</p>
+        )}
       </form>
     </div>
   );

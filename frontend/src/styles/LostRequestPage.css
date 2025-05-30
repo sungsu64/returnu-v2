@@ -51,3 +51,40 @@ textarea {
 .btn-submit:hover {
   background-color: #f4511e;
 }
+
+/* 다크모드 추가 (기존 CSS는 그대로 두세요) */
+
+body.dark .lost-request-wrapper {
+  background-color: #23242c !important;
+}
+
+body.dark h2 {
+  color: #ffd377 !important;
+}
+
+body.dark label {
+  color: #ffd377 !important;
+}
+
+body.dark input,
+body.dark select,
+body.dark textarea {
+  background-color: #252735 !important;
+  color: #ffe4ad !important;
+  border-color: #393a4b !important;
+}
+
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+  color: #928985 !important;
+}
+
+body.dark .btn-submit {
+  background-color: #393a4b !important;
+  color: #ffd377 !important;
+}
+
+body.dark .btn-submit:hover {
+  background-color: #22242b !important;
+  color: #ffe4ad !important;
+}

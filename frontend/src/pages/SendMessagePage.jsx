@@ -1,9 +1,13 @@
+// src/pages/SendMessagePage.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useLang } from "../locale";
 
 export default function SendMessagePage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLang();
+
   const [receiverId, setReceiverId] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -24,7 +28,7 @@ export default function SendMessagePage() {
     e.preventDefault();
 
     if (!receiverId || !senderId || !title || !content) {
-      setError("모든 항목을 입력해주세요.");
+      setError(t("allFieldsRequired"));
       return;
     }
 
@@ -41,31 +45,60 @@ export default function SendMessagePage() {
         }),
       });
 
-      if (!res.ok) throw new Error("쪽지 전송 실패");
-      alert("쪽지를 성공적으로 보냈습니다!");
+      if (!res.ok) throw new Error("fail");
+      alert(t("messageSent"));
       navigate("/my");
     } catch (err) {
       console.error(err);
-      setError("쪽지를 보낼 수 없습니다. 작성자 정보가 없습니다.");
+      setError(t("messageSendError"));
     }
   };
 
   return (
     <div style={{ maxWidth: "480px", margin: "auto", padding: "24px" }}>
-      <h2 style={{ color: "#d33", marginBottom: "16px" }}>📨 쪽지 보내기</h2>
+      <h2 style={{ color: "#d33", marginBottom: "16px" }}>
+        📨 {t("sendMessage")}
+      </h2>
       {error && <p style={{ color: "crimson" }}>❌ {error}</p>}
       <form onSubmit={handleSubmit}>
-        <label>받는 사람 학번</label>
-        <input type="text" value={receiverId} disabled style={{ width: "100%", padding: "8px", marginBottom: "12px" }} />
+        <label>{t("receiverId")}</label>
+        <input
+          type="text"
+          value={receiverId}
+          disabled
+          style={{ width: "100%", padding: "8px", marginBottom: "12px" }}
+        />
 
-        <label>제목</label>
-        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required style={{ width: "100%", padding: "8px", marginBottom: "12px" }} />
+        <label>{t("title")}</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+          style={{ width: "100%", padding: "8px", marginBottom: "12px" }}
+        />
 
-        <label>내용</label>
-        <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={5} required style={{ width: "100%", padding: "8px", marginBottom: "16px" }} />
+        <label>{t("content")}</label>
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          rows={5}
+          required
+          style={{ width: "100%", padding: "8px", marginBottom: "16px" }}
+        />
 
-        <button type="submit" style={{ width: "100%", padding: "12px", backgroundColor: "#ffb347", border: "none", borderRadius: "6px", cursor: "pointer" }}>
-          쪽지 보내기
+        <button
+          type="submit"
+          style={{
+            width: "100%",
+            padding: "12px",
+            backgroundColor: "#ffb347",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+          }}
+        >
+          {t("send")}
         </button>
       </form>
     </div>

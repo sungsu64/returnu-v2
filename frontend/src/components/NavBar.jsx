@@ -1,8 +1,11 @@
+// src/components/NavBar.jsx
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useLang } from "../locale";
 import "../styles/NavBar.css";
 
 export default function NavBar() {
+  const { t } = useLang();
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -19,8 +22,8 @@ export default function NavBar() {
         <button className="fab-button" onClick={toggleMenu}>＋</button>
         {menuOpen && (
           <div className="popup-menu">
-            <button onClick={() => goTo("/lost/create")}>분실물 등록</button>
-            <button onClick={() => goTo("/lost-request")}>습득물 등록</button>
+            <button onClick={() => goTo("/lost/create")}>{t("navCreateLost")}</button>
+            <button onClick={() => goTo("/lost-request")}>{t("navCreateFound")}</button>
           </div>
         )}
       </div>
@@ -28,21 +31,21 @@ export default function NavBar() {
       {/* 하단 네비게이션 */}
       <nav className="bottom-nav">
         <NavLink to="/" end className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-          🏠<br />홈
+          🏠<br />{t("navHome")}
         </NavLink>
 
         <NavLink to="/lost/list" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-          📋<br />분실물
+          📋<br />{t("navLost")}
         </NavLink>
 
         <div className="nav-item spacer"></div> {/* 가운데 간격 확보용 */}
 
         <NavLink to="/requests" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-          📮<br />요청글
+          📮<br />{t("navRequests")}
         </NavLink>
 
         <NavLink to="/my" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-          👤<br />내정보
+          👤<br />{t("navMy")}
         </NavLink>
       </nav>
     </>

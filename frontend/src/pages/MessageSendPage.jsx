@@ -1,8 +1,11 @@
+// src/pages/MessageSendPage.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLang } from "../locale";
 
 export default function MessageSendPage() {
   const navigate = useNavigate();
+  const { t } = useLang();
   const [params] = useSearchParams();
   const receiver_id = params.get("to");
 
@@ -16,14 +19,14 @@ export default function MessageSendPage() {
       const user = JSON.parse(storedUser);
       setSenderId(user.student_id);
     } else {
-      alert("로그인이 필요합니다.");
+      alert(t("loginRequired"));
       navigate("/login");
     }
-  }, [navigate]);
+  }, [navigate, t]);
 
   const handleSend = async () => {
     if (!content.trim()) {
-      setError("내용을 입력하세요.");
+      setError(t("contentRequired"));
       return;
     }
 
@@ -34,25 +37,29 @@ export default function MessageSendPage() {
         body: JSON.stringify({ sender_id: senderId, receiver_id, content }),
       });
 
-      if (!res.ok) throw new Error("전송 실패");
+      if (!res.ok) throw new Error(t("sendFailed"));
 
-      alert("쪽지가 전송되었습니다.");
+      alert(t("messageSent"));
       navigate(-1);
     } catch (e) {
-      setError("전송 중 오류가 발생했습니다.");
+      setError(t("sendError"));
     }
   };
 
   return (
     <div style={{ maxWidth: "480px", margin: "auto", padding: "24px" }}>
-      <h2 style={{ color: "#d19c66", marginBottom: "16px" }}>📬 쪽지 보내기</h2>
+      <h2 style={{ color: "#d19c66", marginBottom: "16px" }}>
+        📬 {t("sendMessage")}
+      </h2>
 
-      <p><strong>받는 사람 학번:</strong> {receiver_id}</p>
+      <p>
+        <strong>{t("receiverIdLabel")}</strong> {receiver_id}
+      </p>
 
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="쪽지 내용을 입력하세요..."
+        placeholder={t("messagePlaceholder")}
         rows={6}
         style={{
           width: "100%",
@@ -62,11 +69,13 @@ export default function MessageSendPage() {
           border: "1px solid #ccc",
           resize: "none",
           marginTop: "12px",
-          marginBottom: "8px"
+          marginBottom: "8px",
         }}
       />
 
-      {error && <p style={{ color: "red", fontSize: "0.9rem" }}>{error}</p>}
+      {error && (
+        <p style={{ color: "red", fontSize: "0.9rem" }}>{error}</p>
+      )}
 
       <button
         onClick={handleSend}
@@ -80,10 +89,10 @@ export default function MessageSendPage() {
           fontSize: "1rem",
           fontWeight: "bold",
           cursor: "pointer",
-          marginTop: "12px"
+          marginTop: "12px",
         }}
       >
-        전송하기
+        {t("sendButton")}
       </button>
     </div>
   );

@@ -82,3 +82,132 @@
   background-color: #4caf50;
   color: white;
 }
+
+.admin-posts-wrapper {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.admin-posts-wrapper h1 {
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.admin-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.admin-tab-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 24px;
+  background-color: #e0e0e0;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.admin-tab-button.active {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.admin-posts-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-post-item {
+  border-bottom: 1px solid #ddd;
+  padding: 16px 0;
+}
+
+.admin-post-title {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.admin-post-meta {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.admin-post-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.admin-post-actions button {
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 8px;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.admin-post-actions .delete-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.admin-post-actions .reply-button {
+  background-color: #4caf50;
+  color: white;
+}
+
+
+/* ------------------- 다크모드 스타일 추가 --------------------- */
+body.dark .admin-posts-wrapper {
+  background-color: #23242a !important;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.15) !important;
+}
+
+body.dark .admin-posts-wrapper h1 {
+  color: #ffe1ac !important;
+}
+
+body.dark .admin-tab-button {
+  background-color: #353745 !important;
+  color: #ffe1ac !important;
+}
+
+body.dark .admin-tab-button.active {
+  background-color: #4a90e2 !important;
+  color: #fff !important;
+}
+
+body.dark .admin-post-item {
+  border-bottom: 1px solid #44485c !important;
+}
+
+body.dark .admin-post-title {
+  color: #ffd58a !important;
+}
+
+body.dark .admin-post-meta {
+  color: #bbb !important;
+}
+
+body.dark .admin-post-actions .delete-button {
+  background-color: #d95a4c !important;
+  color: #ffe1ac !important;
+}
+
+body.dark .admin-post-actions .reply-button {
+  background-color: #358150 !important;
+  color: #ffe1ac !important;
+}
+

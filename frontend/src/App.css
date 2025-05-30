@@ -1,25 +1,83 @@
-/* App.css */
-body {
-  margin: 0;
-  font-family: sans-serif;
-  background: #f9f9f9;
-  overflow-x: hidden;
+html, body, #root {
+  min-height: 100vh;
+  min-width: 100vw;
+  width: 100vw;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box;
 }
 
-#root {
-  display: flex;
-  justify-content: center;
+body {
+  background: #faf9f7;
+  color: #222;
+  transition: background 0.2s, color 0.2s;
 }
 
 .app-wrapper {
-  width: 100%;
   max-width: 480px;
   min-height: 100vh;
-  background-color: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  overflow: visible; /* ✅ 핵심 */
+  margin: 0 auto;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
   position: relative;
+  overflow: visible;
 }
-.app-wrapper {
-  overflow: visible; /* ✅ 진짜 핵심 */
+
+/* ----- 여기까지가 기본 라이트모드 ----- */
+
+/* 아래는 "컴포넌트별로" 직접 다크 스타일을 props/상태값으로 줄 때만 사용할 것 */
+
+/* ===== 다크모드 전역 적용 (맨 아래 추가) ===== */
+
+body.dark, html.dark {
+  background: #191c22 !important;
+  color: #ffe4ad !important;
+}
+
+body.dark .app-wrapper {
+  background: #23242c !important;
+  color: #ffe4ad !important;
+  box-shadow: 0 0 16px rgba(0,0,0,0.18) !important;
+}
+
+body.dark .container,
+body.dark .main,
+body.dark .section,
+body.dark .card,
+body.dark .info-card,
+body.dark .postsContainer,
+body.dark .lost-item-card,
+body.dark .request-card,
+body.dark .my-post-card.upgraded {
+  background: #232533 !important;
+  color: #ffe4ad !important;
+  border-color: #393a4b !important;
+}
+
+/* 버튼, 입력창, 네비게이션 등 추가 예시 */
+body.dark input,
+body.dark textarea,
+body.dark select {
+  background: #232533 !important;
+  color: #ffe4ad !important;
+  border-color: #393a4b !important;
+}
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+  color: #aaa !important;
+}
+
+body.dark .bottom-nav,
+body.dark .fab-fixed-area {
+  background: #20222b !important;
+  border-top: 1.5px solid #343850 !important;
+}
+
+body.dark .nav-item,
+body.dark .fab-button {
+  color: #ffd377 !important;
+}
+body.dark .nav-item.active {
+  color: #ffd377 !important;
+  border-top: 2px solid #ffd377 !important;
 }

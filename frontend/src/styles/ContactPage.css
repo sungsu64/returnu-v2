@@ -59,3 +59,100 @@
 .contact-submit:hover {
   background-color: #2980b9;
 }
+
+.contact-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background: #ffffff;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.contact-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.contact-description {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.contact-form label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: #fff;
+  color: #222;
+}
+
+.contact-form textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.contact-submit {
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.contact-submit:hover {
+  background-color: #2980b9;
+}
+
+/* ---------------- 다크모드 추가 ------------------- */
+body.dark .contact-container {
+  background: #23242a !important;
+}
+
+body.dark .contact-title {
+  color: #ffe1ac !important;
+}
+
+body.dark .contact-description {
+  color: #bdbdbd !important;
+}
+
+body.dark .contact-form label {
+  color: #ffd58a !important;
+}
+
+body.dark .contact-form input,
+body.dark .contact-form textarea {
+  background: #232533 !important;
+  color: #ffe1ac !important;
+  border-color: #44485c !important;
+}
+
+body.dark .contact-submit {
+  background-color: #305fa4 !important;
+  color: #ffe1ac !important;
+}
+
+body.dark .contact-submit:hover {
+  background-color: #203966 !important;
+}

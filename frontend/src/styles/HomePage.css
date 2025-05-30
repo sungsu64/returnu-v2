@@ -231,3 +231,104 @@
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* 다크모드 전용 추가 (기존 CSS는 그대로 두고 아래만 붙여넣으세요) */
+
+body.dark .container {
+  background: #23242c !important;
+}
+
+body.dark .logo {
+  color: #ffc16c !important;
+}
+
+body.dark .subtitle {
+  color: #aaa !important;
+}
+
+body.dark .category {
+  background: #35364b !important;
+  color: #ffe4ad !important;
+  border: 1px solid #393a4b !important;
+}
+body.dark .dropdown {
+  background: #232533 !important;
+  border: 1px solid #393a4b !important;
+}
+body.dark .dropItem {
+  color: #ffe4ad !important;
+}
+body.dark .dropItem:hover {
+  background: #35364b !important;
+}
+
+
+body.dark .input {
+  background: #232533 !important;
+  color: #ffe4ad !important;
+  border: 1px solid #393a4b !important;
+}
+body.dark .input::placeholder {
+  color: #888 !important;
+}
+
+body.dark .searchBtn {
+  color: #ffc16c !important;
+}
+
+body.dark .sectionTitle {
+  color: #ffd377 !important;
+}
+
+body.dark .card {
+  background: #232533 !important;
+  color: #ffe4ad !important;
+  box-shadow: 0 1.5px 6px rgba(0,0,0,0.18) !important;
+}
+body.dark .card:hover {
+  background: #35364b !important;
+}
+
+body.dark .cardTitle {
+  color: #ffd377 !important;
+}
+body.dark .cardInfo {
+  color: #aaa !important;
+}
+
+body.dark .errorText {
+  color: #ff7d7d !important;
+}
+
+body.dark .main-image {
+  opacity: 0.96;
+}
+
+body.dark .guide-text {
+  color: #ffe4ad !important;
+}
+body.dark .sub-guide-text {
+  color: #bbb !important;
+}
+
+body.dark .usage-guide-box {
+  background: #2a2d36 !important;
+  border: 1.5px solid #6fc5f7 !important;
+  color: #7fd2ff !important;
+}
+body.dark .info-card {
+  background: #242531 !important;
+  color: #ffe4ad !important;
+  border: 1.5px solid #393a4b !important;
+  box-shadow: 0 2px 7px rgba(0,0,0,0.17) !important;
+}
+body.dark .info-card:hover {
+  background: #35364b !important;
+}
+
+body.dark .info-title {
+  color: #ffd377 !important;
+}
+body.dark .info-desc {
+  color: #eee0c4 !important;
+}

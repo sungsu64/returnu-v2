@@ -1,10 +1,13 @@
+// src/pages/AdminPostsPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLang } from "../locale";
 import "../styles/MyPostsPage.css";
 
 export default function AdminPostsPage() {
+  const { t } = useLang();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("분실물");
+  const [activeTab, setActiveTab] = useState(t("tabLost"));
   const [posts, setPosts] = useState({ lost: [], found: [], inquiry: [], feedback: [] });
 
   useEffect(() => {
@@ -19,37 +22,38 @@ export default function AdminPostsPage() {
         fetch(`/api/inquiries`),
         fetch(`/api/feedbacks`),
       ]);
-
       const [lost, found, inquiry, feedback] = await Promise.all([
         lostRes.json(),
         foundRes.json(),
         inquiryRes.json(),
         feedbackRes.json(),
       ]);
-
       setPosts({ lost, found, inquiry, feedback });
     } catch (err) {
-      console.error("❌ 글 목록 불러오기 실패:", err);
-      alert("글을 불러오지 못했습니다.");
+      console.error(err);
+      alert(t("postsLoadError"));
     }
   };
 
   const renderList = () => {
     const tabMap = {
-      분실물: posts.lost,
-      습득물: posts.found,
-      문의하기: posts.inquiry,
-      피드백: posts.feedback,
+      [t("tabLost")]: posts.lost,
+      [t("tabFound")]: posts.found,
+      [t("tabInquiry")]: posts.inquiry,
+      [t("tabFeedback")]: posts.feedback,
     };
-    const data = tabMap[activeTab];
+    const data = tabMap[activeTab] || [];
 
-    if (!data.length) return <p className="no-post">게시물이 없습니다.</p>;
-
+    if (!data.length) {
+      return <p className="no-post">{t("noPosts")}</p>;
+    }
     return (
       <ul className="post-list">
         {data.map((item) => (
           <li key={item.id} className="post-item">
-            <strong className="post-title">{item.title || item.content || item.message}</strong>
+            <strong className="post-title">
+              {item.title || item.content || item.message}
+            </strong>
             <div className="post-meta">👤 {item.student_id}</div>
           </li>
         ))}
@@ -59,9 +63,9 @@ export default function AdminPostsPage() {
 
   return (
     <div className="app-wrapper">
-      <h1 className="post-title-heading">📁 전체 글 목록 (관리자)</h1>
+      <h1 className="post-title-heading">📁 {t("adminAllPosts")}</h1>
       <div className="tab-container">
-        {["분실물", "습득물", "문의하기", "피드백"].map((tab) => (
+        {[t("tabLost"), t("tabFound"), t("tabInquiry"), t("tabFeedback")].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}

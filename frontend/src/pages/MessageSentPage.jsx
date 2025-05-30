@@ -1,8 +1,12 @@
+// src/pages/MessageSentPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLang } from "../locale";
 
 export default function MessageSentPage() {
   const navigate = useNavigate();
+  const { t } = useLang();
+
   const [messages, setMessages] = useState([]);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
@@ -10,19 +14,19 @@ export default function MessageSentPage() {
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (!stored) {
-      alert("로그인이 필요합니다.");
+      alert(t("loginRequired"));
       navigate("/login");
     } else {
       setUser(JSON.parse(stored));
     }
-  }, [navigate]);
+  }, [navigate, t]);
 
   useEffect(() => {
     if (!user) return;
 
     fetch(`/api/messages/sent/${user.student_id}`)
       .then((res) => {
-        if (!res.ok) throw new Error("보낸 쪽지를 불러올 수 없습니다.");
+        if (!res.ok) throw new Error(t("cannotLoadSentMessages"));
         return res.json();
       })
       .then((data) => {
@@ -31,44 +35,56 @@ export default function MessageSentPage() {
       .catch((err) => {
         setError(err.message);
       });
-  }, [user]);
+  }, [user, t]);
 
   const handleDelete = (id) => {
-    if (!window.confirm("이 쪽지를 삭제하시겠습니까?")) return;
+    if (!window.confirm(t("confirmDeleteMessage"))) return;
 
     fetch(`/api/messages/${id}`, {
       method: "DELETE",
     })
       .then((res) => {
-        if (!res.ok) throw new Error("삭제 실패");
+        if (!res.ok) throw new Error(t("deleteFailed"));
         setMessages((prev) => prev.filter((msg) => msg.id !== id));
       })
       .catch((err) => {
-        alert("❌ 삭제 중 오류: " + err.message);
+        alert("❌ " + t("deleteError") + ": " + err.message);
       });
   };
 
-  if (error) return <div>❌ 오류: {error}</div>;
+  if (error) {
+    return (
+      <div className="app-wrapper">
+        ❌ {t("error")}: {error}
+      </div>
+    );
+  }
 
   return (
     <div className="app-wrapper">
-      <h2 style={{ margin: "16px", fontSize: "1.4rem" }}>📤 보낸 쪽지함</h2>
+      <h2 style={{ margin: "16px", fontSize: "1.4rem" }}>
+        📤 {t("sentMessages")}
+      </h2>
 
       {messages.length === 0 ? (
-        <p style={{ textAlign: "center", color: "#aaa" }}>보낸 쪽지가 없습니다.</p>
+        <p style={{ textAlign: "center", color: "#aaa" }}>
+          {t("noSentMessages")}
+        </p>
       ) : (
         messages.map((msg) => (
           <div key={msg.id} style={cardStyle}>
-            <p style={{ fontWeight: "bold" }}>{msg.content.split("\n")[0]}</p>
-            <p style={{ margin: "8px 0" }}>{msg.content.split("\n").slice(1).join("\n")}</p>
-            <p style={{ fontSize: "0.8rem", color: "#888" }}>
-              받는 사람: {msg.receiver_id} / {new Date(msg.sent_at).toLocaleString("ko-KR")}
+            <p style={{ fontWeight: "bold" }}>
+              {msg.content.split("\n")[0]}
             </p>
-            <button
-              onClick={() => handleDelete(msg.id)}
-              style={deleteBtnStyle}
-            >
-              삭제
+            <p style={{ margin: "8px 0" }}>
+              {msg.content.split("\n").slice(1).join("\n")}
+            </p>
+            <p style={{ fontSize: "0.8rem", color: "#888" }}>
+              {t("recipient")}: {msg.receiver_id} /{" "}
+              {new Date(msg.sent_at).toLocaleString("ko-KR")}
+            </p>
+            <button onClick={() => handleDelete(msg.id)} style={deleteBtnStyle}>
+              {t("delete")}
             </button>
           </div>
         ))

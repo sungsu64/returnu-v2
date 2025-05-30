@@ -67,3 +67,46 @@
   margin-bottom: 16px;
   text-align: left;
 }
+
+/* 기존 라이트모드 스타일 */
+/* ... 위 코드 복붙 ... */
+
+/* ===== 다크모드 오버라이드 ===== */
+body.dark .edit-lost-wrapper {
+  background: #23242a !important;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.17) !important;
+}
+
+body.dark .edit-lost-form label {
+  color: #ffe0b2 !important;
+}
+
+body.dark .edit-lost-form input,
+body.dark .edit-lost-form textarea {
+  background: #252533 !important;
+  color: #ffe1ac !important;
+  border: 1px solid #44485c !important;
+}
+
+body.dark .edit-lost-btn-group button {
+  background: #292a36 !important;
+  color: #ffcb74 !important;
+  border: 1px solid #45475a !important;
+}
+
+body.dark .edit-lost-btn-group button:hover {
+  background: #383a4c !important;
+}
+
+body.dark .edit-lost-preview {
+  background: #343434 !important;
+  color: #f3f3f3 !important;
+}
+
+body.dark .edit-lost-preview img {
+  /* 이미지 스타일은 그대로 */
+}
+
+body.dark .back-btn {
+  color: #ffce81 !important;
+}

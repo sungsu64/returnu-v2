@@ -73,3 +73,43 @@
   background-color: #9e9e9e;
   color: white;
 }
+
+/* ===== 다크모드 (edit-feedback-wrapper) ===== */
+body.dark .edit-feedback-wrapper {
+  background-color: #22242b !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18) !important;
+}
+
+body.dark .edit-feedback-title {
+  color: #ffcb74 !important;
+}
+
+body.dark .edit-feedback-form label {
+  color: #ffe0b2 !important;
+}
+
+body.dark .edit-feedback-form textarea {
+  background: #232533 !important;
+  color: #ffe1ac !important;
+  border: 1.2px solid #44485c !important;
+}
+
+body.dark .edit-feedback-form textarea:focus {
+  border-color: #ffce81 !important;
+  background: #292a36 !important;
+}
+
+body.dark .edit-feedback-btns .btn {
+  background: #383a4c !important;
+  color: #ffce81 !important;
+}
+
+body.dark .edit-feedback-btns .submit {
+  background-color: #388e3c !important;
+  color: #fff !important;
+}
+
+body.dark .edit-feedback-btns .back {
+  background-color: #607d8b !important;
+  color: #fff !important;
+}

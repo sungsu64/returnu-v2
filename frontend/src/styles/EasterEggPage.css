@@ -40,3 +40,27 @@
   background-color: #ffc107;
 }
 
+/* ------------------- */
+/* 다크모드 오버라이드  */
+/* ------------------- */
+
+body.dark .easter-egg-container,
+html.dark .easter-egg-container {
+  background: linear-gradient(to top right, #23243b 0%, #35354e 100%) !important;
+}
+
+body.dark .easter-msg,
+html.dark .easter-msg {
+  color: #ffe082 !important;   /* 밝은 노란색으로 텍스트 강조 */
+}
+
+body.dark .back-btn,
+html.dark .back-btn {
+  background-color: #4e3d12 !important;
+  color: #ffe082 !important;
+}
+
+body.dark .back-btn:hover,
+html.dark .back-btn:hover {
+  background-color: #856404 !important;
+}

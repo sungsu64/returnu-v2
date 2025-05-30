@@ -19,3 +19,13 @@
   color: #37474f;               /* 내용은 좀 더 차분하게 */
   font-weight: normal;
 }
+
+/* 기존 스타일은 그대로 두고 아래만 추가 */
+
+body.dark .notice-slider {
+  color: #ffc16c;          /* 다크에서 제목/강조 색상 (노랑) */
+}
+
+body.dark .notice-content {
+  color: #e5e5e5;          /* 다크에서 본문 색상 (연회색) */
+}

@@ -1,8 +1,11 @@
+// src/pages/EditInquiryPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useLang } from "../locale";
 import "../styles/EditInquiryPage.css";
 
 export default function EditInquiryPage() {
+  const { t } = useLang();
   const { id } = useParams();
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -12,7 +15,10 @@ export default function EditInquiryPage() {
 
   useEffect(() => {
     fetch(`/api/inquiries/${id}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(t("loadInquiryFailed"));
+        return res.json();
+      })
       .then((data) => {
         setForm({
           title: data.title || "",
@@ -20,10 +26,10 @@ export default function EditInquiryPage() {
         });
       })
       .catch((err) => {
-        console.error("❌ 문의 데이터 불러오기 실패:", err);
-        alert("문의 데이터를 불러오지 못했습니다.");
+        console.error("❌", err);
+        alert(t("loadInquiryFailed"));
       });
-  }, [id]);
+  }, [id, t]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,11 +44,11 @@ export default function EditInquiryPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      if (!res.ok) throw new Error();
-      alert("수정이 완료되었습니다.");
+      if (!res.ok) throw new Error(t("editFailed"));
+      alert(t("editSuccess"));
       navigate("/myposts");
     } catch {
-      alert("수정 중 문제가 발생했습니다.");
+      alert(t("editError"));
     }
   };
 
@@ -52,20 +58,44 @@ export default function EditInquiryPage() {
 
   return (
     <div className="edit-inquiry-wrapper">
-      <h1 className="edit-inquiry-title">📩 문의하기 수정</h1>
+      <h1 className="edit-inquiry-title">📩 {t("editInquiryTitle")}</h1>
       <form className="edit-inquiry-form" onSubmit={handleSubmit}>
         <label>
-          제목
-          <input name="title" value={form.title} onChange={handleChange} required />
+          {t("titleLabel")}
+          <input
+            name="title"
+            value={form.title}
+            onChange={handleChange}
+            required
+          />
         </label>
         <label>
-          내용
-          <textarea name="message" value={form.message} onChange={handleChange} required />
+          {t("messageLabel")}
+          <textarea
+            name="message"
+            value={form.message}
+            onChange={handleChange}
+            required
+          />
         </label>
         <div className="edit-inquiry-btns">
-          <button type="submit" className="btn edit">✅ 수정</button>
-          <button type="button" className="btn reset" onClick={handleReset}>🌀 초기화</button>
-          <button type="button" className="btn back" onClick={() => navigate(-1)}>🔙 뒤로가기</button>
+          <button type="submit" className="btn edit">
+            ✅ {t("saveButton")}
+          </button>
+          <button
+            type="button"
+            className="btn reset"
+            onClick={handleReset}
+          >
+            🌀 {t("resetButton")}
+          </button>
+          <button
+            type="button"
+            className="btn back"
+            onClick={() => navigate(-1)}
+          >
+            🔙 {t("back")}
+          </button>
         </div>
       </form>
     </div>

@@ -1,10 +1,14 @@
+// src/pages/EditFoundItemPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useLang } from "../locale";
 import "../styles/EditFoundItemPage.css";
 
 export default function EditFoundItemPage() {
+  const { t } = useLang();
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
     title: "",
     location: "",
@@ -17,7 +21,10 @@ export default function EditFoundItemPage() {
 
   useEffect(() => {
     fetch(`/api/lost_requests/${id}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(t("loadError"));
+        return res.json();
+      })
       .then((data) => {
         setForm({
           title: data.title || "",
@@ -30,38 +37,38 @@ export default function EditFoundItemPage() {
         setPreview(data.image || null);
       })
       .catch((err) => {
-        console.error("❌ 데이터 불러오기 실패:", err);
-        alert("데이터를 불러오지 못했습니다.");
+        console.error(err);
+        alert(t("loadError"));
       });
-  }, [id]);
+  }, [id, t]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "image") {
       const file = files[0];
-      setForm((prev) => ({ ...prev, image: file }));
-      setPreview(URL.createObjectURL(file));
+      setForm((p) => ({ ...p, image: file }));
+      setPreview(file ? URL.createObjectURL(file) : null);
     } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
+      setForm((p) => ({ ...p, [name]: value }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    for (const key in form) {
-      if (form[key]) formData.append(key, form[key]);
-    }
+    const fd = new FormData();
+    Object.entries(form).forEach(([k, v]) => {
+      if (v) fd.append(k, v);
+    });
     try {
       const res = await fetch(`/api/lost_requests/${id}`, {
         method: "PATCH",
-        body: formData,
+        body: fd,
       });
-      if (!res.ok) throw new Error();
-      alert("수정이 완료되었습니다.");
+      if (!res.ok) throw new Error(t("editFailed"));
+      alert(t("editSuccess"));
       navigate("/myposts");
     } catch {
-      alert("수정 중 문제가 발생했습니다.");
+      alert(t("editError"));
     }
   };
 
@@ -72,38 +79,46 @@ export default function EditFoundItemPage() {
 
   return (
     <div className="edit-found-wrapper">
-      <h1 className="edit-found-title">📦 습득물 수정</h1>
+      <h1 className="edit-found-title">📦 {t("editFoundTitle")}</h1>
       <form className="edit-found-form" onSubmit={handleSubmit}>
-        <label>제목
+        <label>
+          {t("titleLabel")}
           <input name="title" value={form.title} onChange={handleChange} required />
         </label>
-        <label>습득 장소
+        <label>
+          {t("locationLabel")}
           <input name="location" value={form.location} onChange={handleChange} required />
         </label>
-        <label>습득 날짜
+        <label>
+          {t("dateLabel")}
           <input name="date" type="date" value={form.date} onChange={handleChange} required />
         </label>
-        <label>카테고리
+        <label>
+          {t("categoryLabel")}
           <select name="category" value={form.category} onChange={handleChange} required>
-            <option value="">선택</option>
-            <option value="전자기기">전자기기</option>
-            <option value="서류">서류</option>
-            <option value="지갑">지갑</option>
-            <option value="의류">의류</option>
-            <option value="기타">기타</option>
+            <option value="">{t("select")}</option>
+            <option value="전자기기">{t("catElectronics")}</option>
+            <option value="서류">{t("catDocuments")}</option>
+            <option value="지갑">{t("catWallet")}</option>
+            <option value="의류">{t("catClothing")}</option>
+            <option value="기타">{t("catOther")}</option>
           </select>
         </label>
-        <label>상세 설명
+        <label>
+          {t("descriptionLabel")}
           <textarea name="description" value={form.description} onChange={handleChange} required />
         </label>
-        <label>이미지 업로드
+        <label>
+          {t("photoLabel")}
           <input name="image" type="file" accept="image/*" onChange={handleChange} />
         </label>
-        {preview && <img src={preview} alt="미리보기" className="edit-found-preview" />}
+        {preview && (
+          <img src={preview} alt={t("previewAlt")} className="edit-found-preview" />
+        )}
         <div className="edit-found-btns">
-          <button type="submit" className="btn edit">✅ 수정</button>
-          <button type="button" className="btn reset" onClick={handleReset}>🌀 초기화</button>
-          <button type="button" className="btn back" onClick={() => navigate(-1)}>🔙 뒤로가기</button>
+          <button type="submit" className="btn edit">✅ {t("saveButton")}</button>
+          <button type="button" className="btn reset" onClick={handleReset}>🌀 {t("resetButton")}</button>
+          <button type="button" className="btn back" onClick={() => navigate(-1)}>🔙 {t("back")}</button>
         </div>
       </form>
     </div>

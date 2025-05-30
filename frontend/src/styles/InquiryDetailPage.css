@@ -83,3 +83,55 @@
   font-style: italic;
   margin-top: 8px;
 }
+
+/* 다크모드 전용 추가 (기존 CSS는 그대로 두고 아래만 추가) */
+
+body.dark .inquiry-detail-wrapper {
+  background: #23242c !important;
+}
+
+body.dark .inquiry-back-button {
+  background-color: #35364b !important;
+  color: #ffd377 !important;
+}
+body.dark .inquiry-back-button:hover {
+  background-color: #22242b !important;
+}
+
+body.dark .inquiry-detail-card {
+  background-color: #22242b !important;
+  border: 1px solid #393a4b !important;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.14) !important;
+}
+
+body.dark .inquiry-detail-title {
+  color: #ffd377 !important;
+}
+
+body.dark .inquiry-info-grid p {
+  color: #ffe4ad !important;
+}
+
+body.dark .inquiry-divider {
+  border-top: 1px solid #393a4b !important;
+}
+
+body.dark .inquiry-message-section h3,
+body.dark .inquiry-reply-section h3 {
+  color: #ffd377 !important;
+}
+
+body.dark .inquiry-message {
+  color: #ffd377 !important;
+  background: #2c2d3a !important;
+  border: 1px solid #393a4b !important;
+}
+
+body.dark .inquiry-reply-section .inquiry-message {
+  background: #35513d !important;
+  border-color: #65bb76 !important;
+}
+
+body.dark .inquiry-no-reply {
+  color: #aaa !important;
+}
