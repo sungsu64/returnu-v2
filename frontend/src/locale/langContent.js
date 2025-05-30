@@ -315,6 +315,10 @@ changePasswordButton: "비밀번호 변경",
 claimPlaceholder: "본인 이름 입력",
 claimButton: "수령 처리하기",
 InputClaimPlaceholder: "본인 이름 입력",
+editLostTitle: "분실물 수정",
+photoLabel: "사진",
+saveButton: "수정 완료",
+editFoundTitle: "습득물 수정",
 
     // 폼 단일 추가
     categoryPlaceholder: "카테고리 선택",
@@ -639,6 +643,10 @@ InputClaimPlaceholder: "본인 이름 입력",
     claimPlaceholder: "Enter your name",
 claimButton: "Claim",
 InputClaimPlaceholder: "Enter your name",
+editLostTitle: "Edit Lost Item",
+    photoLabel: "Photo",
+    saveButton: "Save Changes",
+    editFoundTitle: "Edit Found Item",
 
     
 

@@ -1,4 +1,3 @@
-// src/pages/EditLostItemPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLang } from "../locale";
@@ -9,12 +8,23 @@ export default function EditLostItemPage() {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  // 카테고리 리스트 (한글)
+  const CATEGORY_LIST = [
+    "전체", // 보통 등록/수정에서는 제외하지만 필요하면 남겨두세요!
+    "전자기기",
+    "의류",
+    "악세서리",
+    "개인소지품",
+    "문서/서류",
+    "기타"
+  ];
+
   const [form, setForm] = useState({
     title: "",
     location: "",
     date: "",
     description: "",
-    category: "기타",
+    category: "기타", // 한글 기본값
     image: null,
   });
   const [preview, setPreview] = useState(null);
@@ -122,10 +132,12 @@ export default function EditLostItemPage() {
           value={form.category}
           onChange={handleChange}
         >
-          <option value="전자기기">{t("catElectronics")}</option>
-          <option value="의류">{t("catClothing")}</option>
-          <option value="서류">{t("catDocuments")}</option>
-          <option value="기타">{t("catOther")}</option>
+          {/* "전체" 카테고리는 등록/수정용에서는 제외하고, 목록/검색용에서만 사용하세요 */}
+          {CATEGORY_LIST.filter(cat => cat !== "전체").map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
         </select>
 
         <label>{t("photoLabel")}</label>
@@ -137,8 +149,8 @@ export default function EditLostItemPage() {
         />
 
         <div className="edit-lost-btn-group">
-          <button onClick={handleCancel}>{t("resetButton")}</button>
-          <button onClick={handleSubmit}>{t("saveButton")}</button>
+          <button type="button" onClick={handleCancel}>{t("resetButton")}</button>
+          <button type="button" onClick={handleSubmit}>{t("saveButton")}</button>
         </div>
 
         {preview && (

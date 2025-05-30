@@ -1,4 +1,3 @@
-// src/pages/EditFoundItemPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLang } from "../locale";
@@ -8,6 +7,16 @@ export default function EditFoundItemPage() {
   const { t } = useLang();
   const { id } = useParams();
   const navigate = useNavigate();
+
+  // 카테고리 한글 배열 (DB값과 100% 일치)
+  const CATEGORY_LIST = [
+    "전자기기",
+    "의류",
+    "악세서리",
+    "개인소지품",
+    "문서/서류",
+    "기타"
+  ];
 
   const [form, setForm] = useState({
     title: "",
@@ -96,12 +105,12 @@ export default function EditFoundItemPage() {
         <label>
           {t("categoryLabel")}
           <select name="category" value={form.category} onChange={handleChange} required>
-            <option value="">{t("select")}</option>
-            <option value="전자기기">{t("catElectronics")}</option>
-            <option value="서류">{t("catDocuments")}</option>
-            <option value="지갑">{t("catWallet")}</option>
-            <option value="의류">{t("catClothing")}</option>
-            <option value="기타">{t("catOther")}</option>
+            <option value="">{t("selectCategory")}</option>
+            {CATEGORY_LIST.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
           </select>
         </label>
         <label>
