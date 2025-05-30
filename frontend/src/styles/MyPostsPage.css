@@ -172,3 +172,26 @@ body.dark .back-btn {
 body.dark .back-btn:hover {
   background-color: #34354b !important;
 }
+
+.post-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.edit-btn {
+  background-color: #ffe082;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background-color: #f28b82;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+}

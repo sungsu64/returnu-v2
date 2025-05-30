@@ -211,3 +211,15 @@ body.dark .admin-post-actions .reply-button {
   color: #ffe1ac !important;
 }
 
+.edit-button {
+  margin-right: 8px;
+  background-color: #4caf50;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-button:hover {
+  background-color: #45a049;
+}

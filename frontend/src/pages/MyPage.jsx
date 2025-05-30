@@ -1,4 +1,3 @@
-// src/pages/MyPage.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLang } from "../locale";
@@ -14,7 +13,6 @@ export default function MyPage() {
   const [studentAnsweredUnreadCount, setStudentAnsweredUnreadCount] = useState(0);
   const [feedback, setFeedback] = useState("");
   const [feedbackSent, setFeedbackSent] = useState(false);
-  const [allFeedbacks, setAllFeedbacks] = useState([]);
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -35,50 +33,44 @@ export default function MyPage() {
     }
   }, [t]);
 
-useEffect(() => {
-  if (user?.student_id && user?.role) {
-    fetchMyData();
+  useEffect(() => {
+    if (user?.student_id && user?.role) {
+      fetchMyData();
 
-    fetch(`/api/messages/received/${user.student_id}`)
-      .then((res) => res.json())
-      .then((msgs) => {
-        const unread = msgs.filter((m) => m.is_read === 0);
-        setUnreadCount(unread.length);
-      });
-
-    if (user.role === "admin") {
-      fetch("/api/feedbacks")
+      fetch(`/api/messages/received/${user.student_id}`)
         .then((res) => res.json())
-        .then(setAllFeedbacks);
-
-      fetch("/api/inquiries")
-        .then((res) => res.json())
-        .then((inqs) => {
-          const unread = inqs.filter((q) => q.is_checked === 0);
-          setAdminUnreadInquiryCount(unread.length);
-        })
-        .catch((err) => console.error("문의 리스트 로딩 실패", err));
-    } else {
-      // 사용자용 응답 알림 → reply_checked가 0인 것만
-      fetch(`/api/inquiries/by-student/${user.student_id}`)
-        .then((res) => res.json())
-        .then((inqs) => {
-          const unreadReplies = inqs.filter(
-            (q) =>
-              typeof q.reply === "string" &&
-              q.reply.trim().length > 0 &&
-              q.reply_checked === 0
-          );
-          setStudentAnsweredUnreadCount(unreadReplies.length);
-        })
-        .catch((err) => {
-          console.error("문의 알림 로딩 오류:", err);
-          setStudentAnsweredUnreadCount(0);
+        .then((msgs) => {
+          const unread = msgs.filter((m) => m.is_read === 0);
+          setUnreadCount(unread.length);
         });
-    }
-  }
-}, [user, fetchMyData, t]);
 
+      if (user.role === "admin") {
+        fetch("/api/inquiries")
+          .then((res) => res.json())
+          .then((inqs) => {
+            const unread = inqs.filter((q) => q.is_checked === 0);
+            setAdminUnreadInquiryCount(unread.length);
+          })
+          .catch((err) => console.error("문의 리스트 로딩 실패", err));
+      } else {
+        fetch(`/api/inquiries/by-student/${user.student_id}`)
+          .then((res) => res.json())
+          .then((inqs) => {
+            const unreadReplies = inqs.filter(
+              (q) =>
+                typeof q.reply === "string" &&
+                q.reply.trim().length > 0 &&
+                q.reply_checked === 0
+            );
+            setStudentAnsweredUnreadCount(unreadReplies.length);
+          })
+          .catch((err) => {
+            console.error("문의 알림 로딩 오류:", err);
+            setStudentAnsweredUnreadCount(0);
+          });
+      }
+    }
+  }, [user, fetchMyData, t]);
 
   const handleFeedbackSubmit = async () => {
     if (!feedback.trim()) {
@@ -190,13 +182,15 @@ useEffect(() => {
               user.role === "admin" ? navigate("/admin/inquiries") : navigate("/contact/history")
             }
           />
-          <CircleBtn
-            label={t("easterEgg")}
-            icon="🎁"
-            onClick={() =>
-              user.role === "admin" ? navigate("/feedback") : navigate("/easter-egg")
-            }
-          />
+         <CircleBtn
+  label={user.role === "admin" ? "피드백 모음" : "클릭해봐"}
+  icon="🎁"
+  onClick={() =>
+    user.role === "admin" ? navigate("/admin/feedback") : navigate("/easter-egg")
+  }
+/>
+
+
         </div>
 
         <MenuItem
@@ -222,27 +216,6 @@ useEffect(() => {
                 );
               })}
             </ul>
-          </>
-        )}
-
-        {user.role === "admin" && (
-          <>
-            <h3 style={titleStyle}>📬 {t("feedbackCollection")}</h3>
-            {allFeedbacks.length === 0 ? (
-              <p style={emptyText}>{t("noFeedbacks")}</p>
-            ) : (
-              allFeedbacks.map((fb) => (
-                <div key={fb.id} style={feedbackBox}>
-                  <div style={{ fontSize: "0.85rem", color: "var(--color-text)" }}>
-                    <strong>{fb.student_id}</strong> –{" "}
-                    {new Date(fb.created_at).toLocaleString("ko-KR")}
-                  </div>
-                  <div style={{ fontSize: "0.9rem", marginTop: "6px", whiteSpace: "pre-wrap" }}>
-                    {fb.content}
-                  </div>
-                </div>
-              ))
-            )}
           </>
         )}
 
@@ -389,19 +362,5 @@ const ulStyle = {
   paddingLeft: "20px",
   fontSize: "0.9rem",
   marginBottom: "10px",
-  color: "var(--color-text)",
-};
-const emptyText = {
-  fontSize: "0.9rem",
-  color: "var(--color-muted)",
-  fontStyle: "italic",
-  marginBottom: "10px",
-};
-const feedbackBox = {
-  background: "var(--color-bg-muted, #f5f5f5)",
-  padding: "10px 12px",
-  borderRadius: "10px",
-  marginBottom: "10px",
-  border: "1px solid var(--color-border)",
   color: "var(--color-text)",
 };

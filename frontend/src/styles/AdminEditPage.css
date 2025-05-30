@@ -1,0 +1,77 @@
+/* styles/AdminEditPage.css */
+
+.admin-edit-container {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 40px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+.admin-edit-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.admin-edit-form .form-field {
+  margin-bottom: 20px;
+}
+
+.form-field label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #444;
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 12px 0;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+.admin-edit-loading {
+  text-align: center;
+  margin-top: 100px;
+  font-size: 18px;
+  color: #888;
+}
+

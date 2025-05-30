@@ -33,6 +33,8 @@ import EditFeedbackPage from "./pages/EditFeedbackPage";
 import EditInquiryPage from "./pages/EditInquiryPage";
 import EditFoundItemPage from "./pages/EditFoundItemPage";
 import EditLostItemPage from "./pages/EditLostItemPage";
+import AdminFeedbackPage from "./pages/AdminFeedbackPage";
+import AdminEditPage from "./pages/AdminEditPage";
 
 function App() {
   return (
@@ -69,6 +71,9 @@ function App() {
           <Route path="/edit/문의하기/:id" element={<EditInquiryPage />} />
           <Route path="/edit/습득물/:id" element={<EditFoundItemPage />} />
           <Route path="/edit/분실물/:id" element={<EditLostItemPage />} />
+          <Route path="/admin/feedback" element={<AdminFeedbackPage />} />
+          <Route path="/admin/edit/:type/:id" element={<AdminEditPage />} />
+          
         </Routes>
       </div>
       <NavBar />

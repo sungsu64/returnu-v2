@@ -637,37 +637,7 @@ app.patch("/api/inquiries/:id/reply", (req, res) => {
 });
 
 
-// 🔽 관리자용 전체 분실물 글 조회
-app.get("/api/lost-items/all", (req, res) => {
-  const query = `
-    SELECT id, title, location, date, student_id
-    FROM lost_items
-    ORDER BY date DESC
-  `;
-  connection.query(query, (err, results) => {
-    if (err) {
-      console.error("❌ 분실물 전체 조회 실패:", err);
-      return res.status(500).json({ error: "서버 오류" });
-    }
-    res.json(results);
-  });
-});
 
-// 🔽 관리자용 전체 습득물 요청 글 조회
-app.get("/api/lost_requests/all", (req, res) => {
-  const query = `
-    SELECT id, title, location, date, student_id
-    FROM lost_requests
-    ORDER BY date DESC
-  `;
-  connection.query(query, (err, results) => {
-    if (err) {
-      console.error("❌ 습득물 전체 조회 실패:", err);
-      return res.status(500).json({ error: "서버 오류" });
-    }
-    res.json(results);
-  });
-});
 
 // 사용자 내 글 관리 삭제
 app.delete("/api/inquiries/:id", (req, res) => {
@@ -828,6 +798,343 @@ app.get("/api/lost_requests/:id", (req, res) => {
     res.json(results[0]);
   });
 });
+
+// ✅ 관리자용 전체 글 조회 API 분리 (/api/admin/... 형식)
+
+// 🔹 분실물 전체 조회
+app.get("/api/admin/lost-items", (req, res) => {
+  const query = `
+    SELECT id, title, location, date, student_id
+    FROM lost_items
+    ORDER BY date DESC
+  `;
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("❌ [ADMIN] 분실물 전체 조회 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.json(results);
+  });
+});
+
+// 🔹 습득 요청 전체 조회
+app.get("/api/admin/lost-requests", (req, res) => {
+  const query = `
+    SELECT id, title, location, date, student_id
+    FROM lost_requests
+    ORDER BY date DESC
+  `;
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("❌ [ADMIN] 습득 요청 전체 조회 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.json(results);
+  });
+});
+
+// 🔹 문의글 전체 조회
+app.get("/api/admin/inquiries", (req, res) => {
+  const query = `
+    SELECT id, title, student_id, email, created_at
+    FROM inquiries
+    ORDER BY created_at DESC
+  `;
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("❌ [ADMIN] 문의 전체 조회 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.json(results);
+  });
+});
+
+// 🔹 피드백 전체 조회
+app.get("/api/admin/feedbacks", (req, res) => {
+  const query = `
+    SELECT id, student_id, content, created_at
+    FROM feedbacks
+    ORDER BY created_at DESC
+  `;
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("❌ [ADMIN] 피드백 전체 조회 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.json(results);
+  });
+});
+
+// 🔹 삭제 API도 관리자용 경로로 분리
+app.delete("/api/admin/lost-items/:id", (req, res) => {
+  const { id } = req.params;
+  connection.query("DELETE FROM lost_items WHERE id = ?", [id], (err) => {
+    if (err) return res.status(500).json({ error: "삭제 실패" });
+    res.status(200).json({ message: "삭제 완료" });
+  });
+});
+
+app.delete("/api/admin/lost-requests/:id", (req, res) => {
+  const { id } = req.params;
+  connection.query("DELETE FROM lost_requests WHERE id = ?", [id], (err) => {
+    if (err) return res.status(500).json({ error: "삭제 실패" });
+    res.status(200).json({ message: "삭제 완료" });
+  });
+});
+
+app.delete("/api/admin/inquiries/:id", (req, res) => {
+  const { id } = req.params;
+  connection.query("DELETE FROM inquiries WHERE id = ?", [id], (err) => {
+    if (err) return res.status(500).json({ error: "삭제 실패" });
+    res.status(200).json({ message: "삭제 완료" });
+  });
+});
+
+app.delete("/api/admin/feedbacks/:id", (req, res) => {
+  const { id } = req.params;
+  connection.query("DELETE FROM feedbacks WHERE id = ?", [id], (err) => {
+    if (err) return res.status(500).json({ error: "삭제 실패" });
+    res.status(200).json({ message: "삭제 완료" });
+  });
+});
+
+// 🔹 관리자용 분실물 수정 API
+app.patch("/api/admin/lost-items/:id", upload.single("image"), (req, res) => {
+  const { id } = req.params;
+  const {
+    title, location, date, description, category
+  } = req.body;
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+
+  // 날짜 포맷 변환
+  let formattedDate;
+  try {
+    formattedDate = new Date(date).toISOString().slice(0, 10); // YYYY-MM-DD
+  } catch (e) {
+    return res.status(400).json({ error: "유효하지 않은 날짜 형식입니다." });
+  }
+
+  let sql = `
+    UPDATE lost_items
+    SET title = ?, location = ?, date = ?, description = ?, category = ?
+  `;
+  const values = [title, location, formattedDate, description, category];
+
+  if (imagePath) {
+    sql += `, image = ?`;
+    values.push(imagePath);
+  }
+
+  sql += ` WHERE id = ?`;
+  values.push(id);
+
+  connection.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("❌ [ADMIN] 분실물 수정 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "해당 글이 없습니다." });
+    }
+    res.status(200).json({ message: "수정 완료" });
+  });
+});
+
+// 🔹 관리자용 요청글 수정 API
+app.patch("/api/admin/lost-requests/:id", upload.single("image"), (req, res) => {
+  const { id } = req.params;
+  const {
+    title, date, location, description, category, phone, email
+  } = req.body;
+
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+
+  // 날짜 포맷 변환
+  let formattedDate;
+  try {
+    formattedDate = new Date(date).toISOString().slice(0, 10); // YYYY-MM-DD
+  } catch (e) {
+    return res.status(400).json({ error: "유효하지 않은 날짜 형식입니다." });
+  }
+
+  let sql = `
+    UPDATE lost_requests
+    SET title = ?, date = ?, location = ?, description = ?, category = ?, phone = ?, email = ?
+  `;
+  const values = [title, formattedDate, location, description, category, phone, email];
+
+  if (imagePath) {
+    sql += `, image = ?`;
+    values.push(imagePath);
+  }
+
+  sql += ` WHERE id = ?`;
+  values.push(id);
+
+  connection.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("❌ [ADMIN] 요청글 수정 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "해당 요청글이 없습니다." });
+    }
+    res.status(200).json({ message: "수정 완료" });
+  });
+});
+
+
+
+app.patch("/api/admin/lost-requests/:id", upload.single("image"), (req, res) => {
+  const { id } = req.params;
+  const { title, date, location, description, category, phone, email } = req.body;
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+
+  let sql = `
+    UPDATE lost_requests
+    SET title = ?, date = ?, location = ?, description = ?, category = ?, phone = ?, email = ?
+  `;
+  const values = [title, date, location, description, category, phone, email];
+
+  if (imagePath) {
+    sql += `, image = ?`;
+    values.push(imagePath);
+  }
+
+  sql += ` WHERE id = ?`;
+  values.push(id);
+
+  connection.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("❌ [ADMIN] 요청글 수정 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.status(200).json({ message: "수정 완료" });
+  });
+});
+
+app.patch("/api/admin/inquiries/:id", (req, res) => {
+  const { id } = req.params;
+  const { title, message } = req.body;
+
+  if (!title || !message) {
+    return res.status(400).json({ error: "제목과 내용을 모두 입력해주세요." });
+  }
+
+  const query = `
+    UPDATE inquiries
+    SET title = ?, message = ?
+    WHERE id = ?
+  `;
+  connection.query(query, [title, message, id], (err, result) => {
+    if (err) {
+      console.error("❌ [ADMIN] 문의글 수정 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "해당 글이 없습니다." });
+    }
+    res.status(200).json({ message: "수정 완료" });
+  });
+});
+
+app.patch("/api/admin/feedbacks/:id", (req, res) => {
+  const { id } = req.params;
+  const { content } = req.body;
+
+  if (!content) return res.status(400).json({ error: "내용이 비어있습니다." });
+
+  const query = `UPDATE feedbacks SET content = ? WHERE id = ?`;
+  connection.query(query, [content, id], (err, result) => {
+    if (err) {
+      console.error("❌ [ADMIN] 피드백 수정 실패:", err);
+      return res.status(500).json({ error: "수정 실패" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "피드백 없음" });
+    }
+    res.status(200).json({ message: "수정 완료" });
+  });
+});
+
+// 🔹 관리자용 상세 조회 API
+app.get("/api/admin/lost-items/:id", (req, res) => {
+  const { id } = req.params;
+  const query = `
+    SELECT id, title, location, date, description, category, image, student_id
+    FROM lost_items
+    WHERE id = ?
+  `;
+  connection.query(query, [id], (err, results) => {
+    if (err) {
+      console.error("❌ 관리자 분실물 상세 조회 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: "데이터 없음" });
+    }
+    res.json(results[0]);
+  });
+});
+
+app.get("/api/admin/lost-requests/:id", (req, res) => {
+  const { id } = req.params;
+  const query = `
+    SELECT id, title, date, location, description, category, phone, email, image, student_id
+    FROM lost_requests
+    WHERE id = ?
+  `;
+  connection.query(query, [id], (err, results) => {
+    if (err) {
+      console.error("❌ 관리자 요청글 상세 조회 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: "데이터 없음" });
+    }
+    res.json(results[0]);
+  });
+});
+
+app.get("/api/admin/inquiries/:id", (req, res) => {
+  const { id } = req.params;
+  const query = `
+    SELECT id, title, message, email, student_id
+    FROM inquiries
+    WHERE id = ?
+  `;
+  connection.query(query, [id], (err, results) => {
+    if (err) {
+      console.error("❌ 관리자 문의글 상세 조회 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: "데이터 없음" });
+    }
+    res.json(results[0]);
+  });
+});
+
+app.get("/api/admin/feedbacks/:id", (req, res) => {
+  const { id } = req.params;
+  const query = `
+    SELECT id, content, student_id
+    FROM feedbacks
+    WHERE id = ?
+  `;
+  connection.query(query, [id], (err, results) => {
+    if (err) {
+      console.error("❌ 관리자 피드백 상세 조회 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: "데이터 없음" });
+    }
+    res.json(results[0]);
+  });
+});
+
+
 
 
 
