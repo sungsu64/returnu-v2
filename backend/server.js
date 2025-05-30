@@ -60,6 +60,95 @@ app.post("/api/users/change-password", (req, res) => {
   );
 });
 
+app.get("/api/lost-items", (req, res) => {
+  // 예시: 전체 분실물 반환
+  const sql = "SELECT * FROM lost_items ORDER BY date DESC";
+  connection.query(sql, (err, results) => {
+    if (err) return res.status(500).send("서버 에러");
+    res.json(results);
+  });
+});
+// 🔽 이하 동일한 API들 그대로 유지 (생략 없음)
+// ✅ 아래 라우트 하나만 남기세요 (필터 한글/영문 모두 커버)
+app.get("/api/lost-items/search", (req, res) => {
+  const query = req.query.query || "";
+  const cat = req.query.cat || "전체";
+  const status = req.query.status || "전체";
+  const order = req.query.order === "asc" ? "ASC" : "DESC";
+  const likeQuery = `%${query}%`;
+  let sql = `
+    SELECT id, title, location, date, claimed_by, image, created_at
+    FROM lost_items
+    WHERE title LIKE ?
+  `;
+  const values = [likeQuery];
+
+  // 카테고리 필터 (all/전체 제외)
+  if (cat !== "전체" && cat !== "all") {
+    sql += ` AND category = ?`;
+    values.push(cat);
+  }
+
+  // 상태 필터 (영문/한글 모두 지원)
+  if (
+    status === "미수령" ||
+    status.toLowerCase() === "unclaimed"
+  ) {
+    sql += ` AND (claimed_by IS NULL OR claimed_by = '')`;
+  } else if (
+    status === "수령완료" ||
+    status.toLowerCase() === "claimed"
+  ) {
+    sql += ` AND claimed_by IS NOT NULL AND claimed_by != ''`;
+  }
+
+  sql += ` ORDER BY date ${order}`;
+
+  connection.query(sql, values, (err, results) => {
+    if (err) return res.status(500).send("서버 에러");
+    res.json(results);
+  });
+});
+
+// 분실물 등록(POST) 라우트 -- 반드시 추가!
+app.post("/api/lost-items", upload.single("image"), (req, res) => {
+  const { title, location, date, description, category, student_id } = req.body;
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+
+  // 필수 값 체크
+  if (!title || !location || !date || !category) {
+    return res.status(400).json({ error: "필수 항목이 누락되었습니다." });
+  }
+
+  const sql = `
+    INSERT INTO lost_items (title, location, date, description, category, image, student_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+  const values = [title, location, date, description, category, imagePath, student_id];
+
+  connection.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("❌ 분실물 등록 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.status(201).json({ message: "등록 성공", id: result.insertId });
+  });
+});
+
+// 분실물 상세 조회
+app.get("/api/lost-items/:id", (req, res) => {
+  const { id } = req.params;
+  const query = `
+    SELECT id, title, location, date, description, image, claimed_by, created_at, category, student_id
+    FROM lost_items WHERE id = ?
+  `;
+  connection.query(query, [id], (err, results) => {
+    if (err) return res.status(500).send("서버 에러");
+    if (results.length === 0) return res.status(404).send("데이터 없음");
+    res.json(results[0]);
+  });
+});
+
 
 // ✅ 쪽지 전송 API (is_read 포함)
 app.post("/api/messages", (req, res) => {
@@ -194,115 +283,7 @@ app.post("/api/lost-requests", upload.single("image"), (req, res) => {
   });
 });
 
-// 🔽 이하 동일한 API들 그대로 유지 (생략 없음)
-app.get("/api/lost-items/search", (req, res) => {
-  const query = req.query.query || "";
-  const cat = req.query.cat || "전체";
-  const status = req.query.status || "전체";
-  const order = req.query.order === "asc" ? "ASC" : "DESC";
-  const likeQuery = `%${query}%`;
-  let sql = `
-    SELECT id, title, location, date, claimed_by, image, created_at
-    FROM lost_items
-    WHERE title LIKE ?
-  `;
-  const values = [likeQuery];
 
-  // 카테고리 필터 (all/전체 제외)
-  if (cat !== "전체" && cat !== "all") {
-    sql += ` AND category = ?`;
-    values.push(cat);
-  }
-
-  // 상태 필터 (영문/한글 모두 지원)
-  if (
-    status === "미수령" ||
-    status.toLowerCase() === "unclaimed"
-  ) {
-    sql += ` AND (claimed_by IS NULL OR claimed_by = '')`;
-  } else if (
-    status === "수령완료" ||
-    status.toLowerCase() === "claimed"
-  ) {
-    sql += ` AND claimed_by IS NOT NULL AND claimed_by != ''`;
-  }
-
-  sql += ` ORDER BY date ${order}`;
-  
-  connection.query(sql, values, (err, results) => {
-    if (err) return res.status(500).send("서버 에러");
-    res.json(results);
-  });
-});
-
-// 🔽 분실물 검색
-app.get("/api/lost-items/search", (req, res) => {
-  const query = req.query.query || "";
-  const cat = req.query.cat || "전체";
-  const status = req.query.status || "전체";
-  const order = req.query.order === "asc" ? "ASC" : "DESC";
-  const likeQuery = `%${query}%`;
-  let sql = `
-    SELECT id, title, location, date, claimed_by, image, created_at
-    FROM lost_items
-    WHERE title LIKE ?
-  `;
-  const values = [likeQuery];
-  if (cat !== "전체") {
-    sql += ` AND category = ?`;
-    values.push(cat);
-  }
-  if (status === "미수령") {
-    sql += ` AND (claimed_by IS NULL OR claimed_by = '')`;
-  } else if (status === "수령완료") {
-    sql += ` AND claimed_by IS NOT NULL AND claimed_by != ''`;
-  }
-  sql += ` ORDER BY date ${order}`;
-  connection.query(sql, values, (err, results) => {
-    if (err) return res.status(500).send("서버 에러");
-    if (results.length === 0) return res.status(404).send("데이터 없음");
-    res.json(results);
-  });
-});
-
-// 🔽 분실물 상세 조회
-app.get("/api/lost-items/:id", (req, res) => {
-  const { id } = req.params;
-  const query = `
-    SELECT id, title, location, date, description, image, claimed_by,
-           IFNULL(created_at, NOW()) as created_at
-    FROM lost_items WHERE id = ?
-  `;
-  connection.query(query, [id], (err, results) => {
-    if (err) return res.status(500).send("서버 에러");
-    if (results.length === 0) return res.status(404).send("데이터 없음");
-    res.json(results[0]);
-  });
-});
-
-app.post("/api/lost-items/claim/:id", (req, res) => {
-  const { id } = req.params;
-  const { claimed_by } = req.body;
-  const query = `
-    UPDATE lost_items
-    SET claimed_by = ?, claimed_at = NOW()
-    WHERE id = ?
-  `;
-  connection.query(query, [claimed_by, id], (err) => {
-    if (err) return res.status(500).send("서버 에러");
-    res.status(200).json({ message: "수령 처리 완료" });
-  });
-});
-
-app.delete("/api/lost-items/:id", (req, res) => {
-  const { id } = req.params;
-  const query = `DELETE FROM lost_items WHERE id = ?`;
-  connection.query(query, [id], (err, result) => {
-    if (err) return res.status(500).send("서버 에러");
-    if (result.affectedRows === 0) return res.status(404).send("데이터 없음");
-    res.status(200).json({ message: "삭제 완료" });
-  });
-});
 
 // 🔽 로그인
 app.post("/api/login", (req, res) => {
