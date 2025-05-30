@@ -307,6 +307,15 @@ export const messages = {
     loginRequired:         "로그인이 필요합니다.",
     errorOccurred:         "오류 발생: ",
 
+    changePasswordTitle: "비밀번호 변경",
+currentPasswordPlaceholder: "현재 비밀번호",
+newPasswordPlaceholder: "새 비밀번호",
+confirmPasswordPlaceholder: "새 비밀번호 확인",
+changePasswordButton: "비밀번호 변경",
+claimPlaceholder: "본인 이름 입력",
+claimButton: "수령 처리하기",
+InputClaimPlaceholder: "본인 이름 입력",
+
     // 폼 단일 추가
     categoryPlaceholder: "카테고리 선택",
     datePlaceholder: "연도-월-일( )",
@@ -621,6 +630,17 @@ export const messages = {
     feedbackCollection: "Feedback Collection",
     sent: "Sent",
     studentId: "Student ID",
+
+    changePasswordTitle: "Change Password",
+    currentPasswordPlaceholder: "Current Password",
+    newPasswordPlaceholder: "New Password",
+    confirmPasswordPlaceholder: "Confirm New Password",
+    changePasswordButton: "Change Password",
+    claimPlaceholder: "Enter your name",
+claimButton: "Claim",
+InputClaimPlaceholder: "Enter your name",
+
+    
 
     // 폼 단일 추가
     categoryPlaceholder: "Category label",

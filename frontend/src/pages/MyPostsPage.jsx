@@ -17,6 +17,14 @@ export default function MyPostsPage() {
     feedback: [],
   });
 
+  // ✨ 탭 타입 <-> 실제 라우터 경로 변환 (한글)
+  const tabTypeMap = {
+    tabLost: "분실물",
+    tabFound: "습득물",
+    tabInquiry: "문의하기",
+    tabFeedback: "피드백",
+  };
+
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (!stored) {
@@ -34,6 +42,7 @@ export default function MyPostsPage() {
     }
 
     fetchAllPosts(parsed.student_id);
+    // eslint-disable-next-line
   }, [navigate, t]);
 
   const fetchAllPosts = async (student_id) => {
@@ -122,7 +131,7 @@ export default function MyPostsPage() {
                 <button
                   className="edit-btn"
                   onClick={() =>
-                    navigate(`/edit/${activeTab}/${item.id}`)
+                    navigate(`/edit/${tabTypeMap[activeTab]}/${item.id}`)
                   }
                 >
                   {t("edit")}

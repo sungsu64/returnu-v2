@@ -131,11 +131,6 @@ body.dark .my-posts-wrapper {
 body.dark .my-posts-title-main {
   color: #ffe4ad !important;
 }
-
-body.dark .my-posts-tabs {
-  /* 배경 필요시 여기에도 넣어도 됨 */
-}
-
 body.dark .my-posts-tab-btn {
   background-color: #272836 !important;
   color: #ffe4ad !important;
@@ -144,11 +139,6 @@ body.dark .my-posts-tab-btn.active {
   background-color: #ffc16c !important;
   color: #222 !important;
 }
-
-body.dark .my-posts-list {
-  /* 카드 배경으로 인해 필요없음 */
-}
-
 body.dark .my-post-card.upgraded {
   background-color: #242531 !important;
   color: #f3f3f3 !important;
