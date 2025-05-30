@@ -7,7 +7,7 @@ import NoticeSlider from "../components/NoticeSlider";
 import FaqChatbot from "../components/FaqChatbot";
 import "../styles/HomePage.css";
 
-const CATEGORY_LIST = ["전체", "전자기기", "의류", "악세서리", "개인소지품", "문서/서류", "기타"];
+const CATEGORY_LIST = ["분실물", "습득물"];
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -15,9 +15,8 @@ export default function HomePage() {
   const { t } = useLang();
 
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState(t("all"));
+  const [category, setCategory] = useState("분실물");
   const [openCat, setOpenCat] = useState(false);
-  const [selectedType, setSelectedType] = useState(t("lostTab"));
   const catRef = useRef();
 
   const [notices, setNotices] = useState([]);
@@ -36,8 +35,8 @@ export default function HomePage() {
   useEffect(() => {
     const qp = new URLSearchParams(location.search);
     setSearch(qp.get("query") || "");
-    setCategory(qp.get("cat") || t("all"));
-  }, [location.search, t]);
+    setCategory(qp.get("cat") || "분실물");
+  }, [location.search]);
 
   useEffect(() => {
     async function fetchNotices() {
@@ -67,17 +66,12 @@ export default function HomePage() {
     inputText: isDark ? "#ffe4ad" : "#333",
     inputBorder: isDark ? "#393a4b" : "#ccc",
     searchBtn: isDark ? "#ffc16c" : "#888",
-    tabBg: isDark ? "#232533" : "#f2f2f2",
-    tabSelected: isDark ? "#ffc16c" : "#d19c66",
-    tabUnselected: "transparent",
-    tabSelectedText: isDark ? "#23242c" : "#fff",
-    tabUnselectedText: isDark ? "#ffe4ad" : "#555",
   };
 
   const handleSearch = e => {
     e.preventDefault();
     if (!search.trim()) return;
-    const path = selectedType === t("lostTab") ? "/lost/list" : "/requests";
+    const path = category === "분실물" ? "/lost/list" : "/requests";
     navigate(`${path}?query=${encodeURIComponent(search)}&cat=${encodeURIComponent(category)}`);
   };
 
@@ -103,7 +97,7 @@ export default function HomePage() {
         <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
           <div
             ref={catRef}
-            onClick={() => setOpenCat(o => !o)}
+            onClick={() => setOpenCat(prev => !prev)}
             style={{
               padding: "0 12px",
               background: colors.catBg,
@@ -141,17 +135,20 @@ export default function HomePage() {
                 {CATEGORY_LIST.map(cat => (
                   <li
                     key={cat}
-                    onClick={() => { setCategory(cat); setOpenCat(false); }}
+                    onMouseDown={() => {
+                      setCategory(cat);
+                      setOpenCat(false); // 드롭다운 닫힘 확실히 실행
+                    }}
                     style={{
                       padding: "12px 16px",
                       cursor: "pointer",
                       fontSize: "1rem",
                       color: colors.dropText,
-                      background: category === cat ? colors.tabBg : "transparent",
+                      background: category === cat ? colors.catBg : "transparent",
                       transition: "background 0.15s"
                     }}
                     onMouseOver={e => e.currentTarget.style.background = colors.dropHover}
-                    onMouseOut={e => e.currentTarget.style.background = (category === cat ? colors.tabBg : "transparent")}
+                    onMouseOut={e => e.currentTarget.style.background = (category === cat ? colors.catBg : "transparent")}
                   >
                     {cat}
                   </li>
@@ -193,37 +190,6 @@ export default function HomePage() {
           </div>
         </div>
       </form>
-
-      <div style={{
-        display: "flex",
-        justifyContent: "center",
-        marginTop: 16,
-        padding: 4,
-        borderRadius: 16,
-        background: colors.tabBg,
-        width: "fit-content",
-        marginLeft: "auto",
-        marginRight: "auto"
-      }}>
-        {[t("lostTab"), t("foundTab")].map(type => (
-          <button
-            key={type}
-            onClick={() => setSelectedType(type)}
-            style={{
-              padding: "8px 20px",
-              borderRadius: 16,
-              border: "none",
-              background: selectedType === type ? colors.tabSelected : colors.tabUnselected,
-              color: selectedType === type ? colors.tabSelectedText : colors.tabUnselectedText,
-              fontWeight: "bold",
-              fontSize: "0.95rem",
-              cursor: "pointer"
-            }}
-          >
-            {type}
-          </button>
-        ))}
-      </div>
 
       <div className="home-illustration">
         <img src={mainImage} alt={t("mainIllustrationAlt")} className="main-image" />

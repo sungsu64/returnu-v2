@@ -10,6 +10,8 @@ export default function MyPage() {
   const [user, setUser] = useState(null);
   const [expiringItems, setExpiringItems] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [adminUnreadInquiryCount, setAdminUnreadInquiryCount] = useState(0);
+  const [studentAnsweredUnreadCount, setStudentAnsweredUnreadCount] = useState(0);
   const [feedback, setFeedback] = useState("");
   const [feedbackSent, setFeedbackSent] = useState(false);
   const [allFeedbacks, setAllFeedbacks] = useState([]);
@@ -33,24 +35,50 @@ export default function MyPage() {
     }
   }, [t]);
 
-  useEffect(() => {
-    if (user?.student_id && user?.role) {
-      fetchMyData();
+useEffect(() => {
+  if (user?.student_id && user?.role) {
+    fetchMyData();
 
-      fetch(`/api/messages/received/${user.student_id}`)
+    fetch(`/api/messages/received/${user.student_id}`)
+      .then((res) => res.json())
+      .then((msgs) => {
+        const unread = msgs.filter((m) => m.is_read === 0);
+        setUnreadCount(unread.length);
+      });
+
+    if (user.role === "admin") {
+      fetch("/api/feedbacks")
         .then((res) => res.json())
-        .then((msgs) => {
-          const unread = msgs.filter((m) => m.is_read === 0);
-          setUnreadCount(unread.length);
-        });
+        .then(setAllFeedbacks);
 
-      if (user.role === "admin") {
-        fetch("/api/feedbacks")
-          .then((res) => res.json())
-          .then(setAllFeedbacks);
-      }
+      fetch("/api/inquiries")
+        .then((res) => res.json())
+        .then((inqs) => {
+          const unread = inqs.filter((q) => q.is_checked === 0);
+          setAdminUnreadInquiryCount(unread.length);
+        })
+        .catch((err) => console.error("문의 리스트 로딩 실패", err));
+    } else {
+      // 사용자용 응답 알림 → reply_checked가 0인 것만
+      fetch(`/api/inquiries/by-student/${user.student_id}`)
+        .then((res) => res.json())
+        .then((inqs) => {
+          const unreadReplies = inqs.filter(
+            (q) =>
+              typeof q.reply === "string" &&
+              q.reply.trim().length > 0 &&
+              q.reply_checked === 0
+          );
+          setStudentAnsweredUnreadCount(unreadReplies.length);
+        })
+        .catch((err) => {
+          console.error("문의 알림 로딩 오류:", err);
+          setStudentAnsweredUnreadCount(0);
+        });
     }
-  }, [user, fetchMyData, t]);
+  }
+}, [user, fetchMyData, t]);
+
 
   const handleFeedbackSubmit = async () => {
     if (!feedback.trim()) {
@@ -74,17 +102,9 @@ export default function MyPage() {
     }
   };
 
-  if (!user) {
-    return (
-      <div className="app-wrapper">
-        ⏳ {t("loadingUser")}
-      </div>
-    );
-  }
+  if (!user) return <div className="app-wrapper">⏳ {t("loadingUser")}</div>;
 
-  const isDark =
-    typeof document !== "undefined" &&
-    document.body.classList.contains("dark");
+  const isDark = typeof document !== "undefined" && document.body.classList.contains("dark");
 
   return (
     <div
@@ -105,15 +125,7 @@ export default function MyPage() {
           boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
         }}
       >
-        {/* 프로필 + 설정 아이콘 */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "20px",
-          }}
-        >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
           <div style={{ display: "flex", alignItems: "center" }}>
             <img
               src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
@@ -126,22 +138,8 @@ export default function MyPage() {
               }}
             />
             <div>
-              <div
-                style={{
-                  fontWeight: "bold",
-                  fontSize: "1rem",
-                  textAlign: "left",
-                  color: "var(--color-text)",
-                }}
-              >
-                {user.name}
-              </div>
-              <div
-                style={{
-                  fontSize: "0.85rem",
-                  color: "var(--color-muted)",
-                }}
-              >
+              <div style={{ fontWeight: "bold", fontSize: "1rem", textAlign: "left" }}>{user.name}</div>
+              <div style={{ fontSize: "0.85rem", color: "var(--color-muted)" }}>
                 {t("studentId")}: {user.student_id}
               </div>
             </div>
@@ -151,7 +149,6 @@ export default function MyPage() {
               background: "none",
               border: "none",
               fontSize: "1.2rem",
-              color: "var(--color-text)",
               cursor: "pointer",
             }}
             onClick={() => navigate("/settings")}
@@ -162,13 +159,7 @@ export default function MyPage() {
         </div>
 
         {user.role === "admin" && (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginBottom: "10px",
-            }}
-          >
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
             <button
               onClick={() => navigate("/notices/manage")}
               style={{
@@ -180,7 +171,6 @@ export default function MyPage() {
                 cursor: "pointer",
                 color: isDark ? "#242424" : "#444",
                 fontWeight: 600,
-                transition: "background 0.2s, color 0.2s",
               }}
             >
               📢 {t("createNotice")}
@@ -188,40 +178,27 @@ export default function MyPage() {
           </div>
         )}
 
-        {/* 동그라미 버튼 */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-around",
-            marginBottom: "24px",
-          }}
-        >
-          <CircleBtn
-            label={t("myPosts")}
-            icon="🗂️"
-            onClick={() => navigate("/myposts")}
-          />
+        <div style={{ display: "flex", justifyContent: "space-around", marginBottom: "24px" }}>
+          <CircleBtn label={t("myPosts")} icon="🗂️" onClick={() => navigate("/myposts")} />
           <CircleBtn
             label={t("inquiryHistory")}
             icon="📨"
+            unreadCount={
+              user.role === "admin" ? adminUnreadInquiryCount : studentAnsweredUnreadCount
+            }
             onClick={() =>
-              user.role === "admin"
-                ? navigate("/admin/inquiries")
-                : navigate("/contact/history")
+              user.role === "admin" ? navigate("/admin/inquiries") : navigate("/contact/history")
             }
           />
           <CircleBtn
             label={t("easterEgg")}
             icon="🎁"
             onClick={() =>
-              user.role === "admin"
-                ? navigate("/feedback")
-                : navigate("/easter-egg")
+              user.role === "admin" ? navigate("/feedback") : navigate("/easter-egg")
             }
           />
         </div>
 
-        {/* 사각형 버튼 */}
         <MenuItem
           label={t("inbox")}
           onClick={() => navigate("/messages/inbox")}
@@ -232,19 +209,15 @@ export default function MyPage() {
           onClick={() => navigate("/messages/sent")}
         />
 
-        {/* 보관기한 임박 */}
         {expiringItems.length > 0 && (
           <>
             <h3 style={titleStyle}>⏰ {t("expiringSoon")}</h3>
             <ul style={ulStyle}>
               {expiringItems.map((item) => {
-                const dDay = Math.ceil(
-                  (new Date(item.expireDate) - Date.now()) / 86400000
-                );
+                const dDay = Math.ceil((new Date(item.expireDate) - Date.now()) / 86400000);
                 return (
                   <li key={item.id}>
-                    {item.title} – D-
-                    {dDay <= 0 ? t("dDay") : dDay}
+                    {item.title} – D-{dDay <= 0 ? t("dDay") : dDay}
                   </li>
                 );
               })}
@@ -252,7 +225,6 @@ export default function MyPage() {
           </>
         )}
 
-        {/* 관리자 피드백 모음 */}
         {user.role === "admin" && (
           <>
             <h3 style={titleStyle}>📬 {t("feedbackCollection")}</h3>
@@ -261,22 +233,11 @@ export default function MyPage() {
             ) : (
               allFeedbacks.map((fb) => (
                 <div key={fb.id} style={feedbackBox}>
-                  <div
-                    style={{
-                      fontSize: "0.85rem",
-                      color: "var(--color-text)",
-                    }}
-                  >
+                  <div style={{ fontSize: "0.85rem", color: "var(--color-text)" }}>
                     <strong>{fb.student_id}</strong> –{" "}
                     {new Date(fb.created_at).toLocaleString("ko-KR")}
                   </div>
-                  <div
-                    style={{
-                      fontSize: "0.9rem",
-                      marginTop: "6px",
-                      whiteSpace: "pre-wrap",
-                    }}
-                  >
+                  <div style={{ fontSize: "0.9rem", marginTop: "6px", whiteSpace: "pre-wrap" }}>
                     {fb.content}
                   </div>
                 </div>
@@ -285,7 +246,6 @@ export default function MyPage() {
           </>
         )}
 
-        {/* 사용자 피드백 작성 */}
         {user.role !== "admin" && (
           <>
             <h3 style={titleStyle}>💬 {t("feedbackHeading")}</h3>
@@ -333,32 +293,52 @@ export default function MyPage() {
   );
 }
 
-// 동그라미 버튼
-const CircleBtn = ({ label, icon, onClick }) => (
-  <button
-    onClick={onClick}
-    style={{
-      width: "72px",
-      height: "72px",
-      borderRadius: "50%",
-      background: "var(--color-card-bg, #fff7e6)",
-      border: "1px solid #f5c16c",
-      fontSize: "0.8rem",
-      fontWeight: "bold",
-      cursor: "pointer",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      color: "var(--color-text)",
-    }}
-  >
-    <span style={{ fontSize: "1.2rem", marginBottom: "2px" }}>{icon}</span>
-    {label}
-  </button>
+const CircleBtn = ({ label, icon, onClick, unreadCount }) => (
+  <div style={{ position: "relative" }}>
+    <button
+      onClick={onClick}
+      style={{
+        width: "72px",
+        height: "72px",
+        borderRadius: "50%",
+        background: "var(--color-card-bg, #fff7e6)",
+        border: "1px solid #f5c16c",
+        fontSize: "0.8rem",
+        fontWeight: "bold",
+        cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        color: "var(--color-text)",
+      }}
+    >
+      <span style={{ fontSize: "1.2rem", marginBottom: "2px" }}>{icon}</span>
+      {label}
+    </button>
+    {unreadCount > 0 && (
+      <span
+        style={{
+          position: "absolute",
+          top: -4,
+          right: -4,
+          backgroundColor: "red",
+          color: "white",
+          borderRadius: "50%",
+          width: "18px",
+          height: "18px",
+          fontSize: "11px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {unreadCount > 9 ? "9+" : unreadCount}
+      </span>
+    )}
+  </div>
 );
 
-// 사각형 메뉴 버튼
 const MenuItem = ({ label, onClick, unreadCount }) => (
   <div
     onClick={onClick}

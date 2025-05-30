@@ -1,4 +1,3 @@
-// src/pages/InquiryListPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLang } from "../locale";
@@ -35,7 +34,28 @@ export default function InquiryListPage() {
   }, [navigate, t]);
 
   const handleWriteInquiry = () => navigate("/contact");
-  const handleViewDetail = (id) => navigate(`/contact/${id}`);
+
+  const handleViewDetail = async (inq) => {
+    const hasReply = typeof inq.reply === "string" && inq.reply.trim().length > 0;
+
+    // ✅ 답변이 있고, reply_checked가 아직 0이면 읽음 처리
+    if (hasReply && inq.reply_checked === 0) {
+      try {
+        await fetch(`/api/inquiries/${inq.id}/reply-read`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        console.log("✅ reply_checked 처리됨");
+      } catch (err) {
+        console.error("❌ 읽음 처리 실패:", err);
+      }
+    }
+
+    navigate(`/contact/${inq.id}`);
+  };
+
   const handleBack = () => navigate(-1);
 
   if (loading)
@@ -63,23 +83,73 @@ export default function InquiryListPage() {
         <p className="inquiry-status">{t("noInquiries")}</p>
       ) : (
         <div className="inquiry-list">
-          {inquiries.map((inq) => (
-            <div
-              key={inq.id}
-              onClick={() => handleViewDetail(inq.id)}
-              className="inquiry-card"
-            >
-              <div className="inquiry-card-header">
-                <div className="inquiry-title">{inq.title}</div>
-                <div className="inquiry-date">
-                  {new Date(inq.created_at).toLocaleDateString("ko-KR")}
+          {inquiries.map((inq) => {
+            const hasReply = typeof inq.reply === "string" && inq.reply.trim().length > 0;
+
+            return (
+              <div
+                key={inq.id}
+                onClick={() => handleViewDetail(inq)}
+                className="inquiry-card"
+                style={{
+                  position: "relative",
+                  backgroundColor: "#fff",
+                  border: "1px solid #ddd",
+                  borderRadius: "10px",
+                  padding: "12px 16px",
+                  marginBottom: "12px",
+                  cursor: "pointer",
+                }}
+              >
+                <div className="inquiry-card-header" style={{ display: "flex", justifyContent: "space-between" }}>
+                  <div className="inquiry-title" style={{ fontWeight: "bold" }}>{inq.title}</div>
+                  <div className="inquiry-date" style={{ fontSize: "0.85rem", color: "#888" }}>
+                    {new Date(inq.created_at).toLocaleDateString("ko-KR")}
+                  </div>
                 </div>
+                <div className="inquiry-meta" style={{ fontSize: "0.9rem", color: "#444" }}>
+                  📧 {inq.email}
+                </div>
+
+                {/* ✅ reply_checked가 0이면 미확인 상태, 1이면 완료 상태로 표시 */}
+                {hasReply && inq.reply_checked === 0 && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: "10px",
+                      right: "10px",
+                      backgroundColor: "#f57c00",
+                      color: "white",
+                      fontSize: "0.75rem",
+                      padding: "3px 8px",
+                      borderRadius: "12px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    🟠 새 답변
+                  </span>
+                )}
+
+                {hasReply && inq.reply_checked === 1 && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: "10px",
+                      right: "10px",
+                      backgroundColor: "#4caf50",
+                      color: "white",
+                      fontSize: "0.75rem",
+                      padding: "3px 8px",
+                      borderRadius: "12px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    ✅ 답변 완료
+                  </span>
+                )}
               </div>
-              <div className="inquiry-meta">
-                📧 {inq.email}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

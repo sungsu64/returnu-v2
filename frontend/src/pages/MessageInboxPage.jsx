@@ -11,7 +11,6 @@ export default function MessageInboxPage() {
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
 
-  // 다크모드 감지 (body에 dark 클래스 있으면 true)
   const isDark = typeof document !== "undefined" && document.body.classList.contains("dark");
 
   useEffect(() => {
@@ -24,19 +23,19 @@ export default function MessageInboxPage() {
     }
   }, [navigate, t]);
 
-  useEffect(() => {
+  const fetchMessages = () => {
     if (!user) return;
     fetch(`/api/messages/received/${user.student_id}`)
       .then((res) => {
         if (!res.ok) throw new Error(t("cannotLoadMessages"));
         return res.json();
       })
-      .then((data) => {
-        setMessages(data);
-      })
-      .catch((err) => {
-        setError(err.message);
-      });
+      .then(setMessages)
+      .catch((err) => setError(err.message));
+  };
+
+  useEffect(() => {
+    fetchMessages();
   }, [user, t]);
 
   const handleDelete = (id) => {
@@ -51,6 +50,15 @@ export default function MessageInboxPage() {
       });
   };
 
+  const markAsRead = async (msgId) => {
+    try {
+      await fetch(`/api/messages/${msgId}/read`, { method: "PATCH" });
+      fetchMessages(); // 다시 불러서 is_read 반영
+    } catch (err) {
+      console.error("읽음 처리 실패", err);
+    }
+  };
+
   if (error) {
     return (
       <div className="app-wrapper">
@@ -61,26 +69,18 @@ export default function MessageInboxPage() {
 
   return (
     <div className="app-wrapper">
-      <h2
-        style={{
-          margin: "16px",
-          fontSize: "1.4rem",
-          color: isDark ? "#ffd377" : "#d19c66"
-        }}
-      >
+      <h2 style={{ margin: "16px", fontSize: "1.4rem", color: isDark ? "#ffd377" : "#d19c66" }}>
         📥 {t("inbox")}
       </h2>
 
       {messages.length === 0 ? (
-        <p style={{ textAlign: "center", color: isDark ? "#999" : "#aaa" }}>
-          {t("noInboxMessages")}
-        </p>
+        <p style={{ textAlign: "center", color: isDark ? "#999" : "#aaa" }}>{t("noInboxMessages")}</p>
       ) : (
         messages.map((msg) => (
           <div
             key={msg.id}
             style={{
-              background: isDark ? "#232533" : "#fff8f0",
+              background: isDark ? "#232533" : msg.is_read ? "#f5f5f5" : "#fff1e6",
               color: isDark ? "#ffe8ad" : "#222",
               margin: "16px",
               padding: "16px",
@@ -89,31 +89,16 @@ export default function MessageInboxPage() {
                 ? "0 2px 12px rgba(0,0,0,0.16)"
                 : "0 1px 4px rgba(0,0,0,0.06)",
               position: "relative",
-              transition: "background 0.18s, color 0.18s"
+              transition: "background 0.18s, color 0.18s",
             }}
           >
-            <p
-              style={{
-                fontWeight: "bold",
-                color: isDark ? "#ffd377" : "#222"
-              }}
-            >
+            <p style={{ fontWeight: "bold", color: isDark ? "#ffd377" : "#222" }}>
               {msg.content.split("\n")[0]}
             </p>
-            <p
-              style={{
-                margin: "8px 0",
-                color: isDark ? "#fff" : "#333"
-              }}
-            >
+            <p style={{ margin: "8px 0", color: isDark ? "#fff" : "#333" }}>
               {msg.content.split("\n").slice(1).join("\n")}
             </p>
-            <p
-              style={{
-                fontSize: "0.82rem",
-                color: isDark ? "#bbb" : "#888"
-              }}
-            >
+            <p style={{ fontSize: "0.82rem", color: isDark ? "#bbb" : "#888" }}>
               {t("sender")}: {msg.sender_id} /{" "}
               {new Date(msg.sent_at).toLocaleString("ko-KR")}
             </p>
@@ -129,15 +114,13 @@ export default function MessageInboxPage() {
                   borderRadius: "6px",
                   cursor: "pointer",
                   fontSize: "0.8rem",
-                  boxShadow: isDark ? "0 1px 4px #101119" : undefined
+                  boxShadow: isDark ? "0 1px 4px #101119" : undefined,
                 }}
               >
                 {t("delete")}
               </button>
               <button
-                onClick={() =>
-                  navigate(`/send-message?receiver_id=${msg.sender_id}`)
-                }
+                onClick={() => navigate(`/send-message?receiver_id=${msg.sender_id}`)}
                 style={{
                   backgroundColor: "#2196f3",
                   color: "#fff",
@@ -147,11 +130,28 @@ export default function MessageInboxPage() {
                   cursor: "pointer",
                   fontSize: "0.8rem",
                   marginLeft: "8px",
-                  boxShadow: isDark ? "0 1px 4px #101119" : undefined
+                  boxShadow: isDark ? "0 1px 4px #101119" : undefined,
                 }}
               >
                 {t("reply")}
               </button>
+              {!msg.is_read && (
+                <button
+                  onClick={() => markAsRead(msg.id)}
+                  style={{
+                    marginLeft: "8px",
+                    backgroundColor: "#ffa000",
+                    color: "#fff",
+                    border: "none",
+                    padding: "6px 12px",
+                    borderRadius: "6px",
+                    fontSize: "0.8rem",
+                    cursor: "pointer",
+                  }}
+                >
+                  ✅ {t("markAsRead")}
+                </button>
+              )}
             </div>
           </div>
         ))

@@ -36,6 +36,47 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage });
+app.get("/api/inquiries", (req, res) => {
+  const sql = "SELECT * FROM inquiries ORDER BY created_at DESC";
+  connection.query(sql, (err, results) => {
+    if (err) {
+      console.error("❌ 문의 리스트 불러오기 실패:", err);
+      res.status(500).json({ error: "서버 오류" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+// ✅ 문의 읽음 처리 API
+app.patch("/api/inquiries/:id/check", (req, res) => {
+  const id = req.params.id;
+  const sql = "UPDATE inquiries SET is_checked = 1 WHERE id = ?";
+  connection.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error("❌ 문의 읽음 처리 실패:", err);
+      res.status(500).json({ error: "처리 실패" });
+    } else {
+      res.json({ success: true });
+    }
+  });
+});
+
+// ✅ 쪽지 읽음 처리 API
+app.patch("/api/messages/:id/read", (req, res) => {
+  const id = req.params.id;
+  const sql = "UPDATE messages SET is_read = 1 WHERE id = ?";
+
+  connection.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error("❌ 메시지 읽음 처리 실패:", err);
+      res.status(500).json({ error: "읽음 처리 중 오류 발생" });
+    } else {
+      res.json({ success: true });
+    }
+  });
+});
+
 
 app.post("/api/users/change-password", (req, res) => {
   const { student_id, currentPassword, newPassword } = req.body;
@@ -413,11 +454,25 @@ app.get("/api/admin/activity-logs", (req, res) => {
     res.json(results);
   });
 });
+// 사용자 응답 읽음 처리용
+app.patch("/api/inquiries/:id/reply-read", (req, res) => {
+  const { id } = req.params;
+  const query = "UPDATE inquiries SET reply_checked = 1 WHERE id = ?";
+  connection.query(query, [id], (err, result) => {
+    if (err) {
+      console.error("❌ reply_checked 업데이트 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    res.json({ success: true });
+  });
+});
 
+
+// 문의 목록 조회 (학생별)
 app.get("/api/inquiries/by-student/:student_id", (req, res) => {
   const { student_id } = req.params;
   const query = `
-    SELECT id, title, created_at, email
+    SELECT id, title, created_at, email, reply, reply_checked
     FROM inquiries
     WHERE student_id = ?
     ORDER BY created_at DESC
@@ -430,6 +485,8 @@ app.get("/api/inquiries/by-student/:student_id", (req, res) => {
     res.json(results);
   });
 });
+
+
 
 app.post("/api/inquiries", (req, res) => {
   const { name, student_id, email, title, message } = req.body;

@@ -9,7 +9,6 @@ export default function SendMessagePage() {
   const { t } = useLang();
 
   const [receiverId, setReceiverId] = useState("");
-  const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
 
@@ -27,12 +26,10 @@ export default function SendMessagePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!receiverId || !senderId || !title || !content) {
+    if (!receiverId || !senderId || !content) {
       setError(t("allFieldsRequired"));
       return;
     }
-
-    const fullMessage = `제목: ${title}\n\n내용: ${content}`;
 
     try {
       const res = await fetch("http://localhost:8090/api/messages", {
@@ -41,7 +38,7 @@ export default function SendMessagePage() {
         body: JSON.stringify({
           sender_id: senderId,
           receiver_id: receiverId,
-          content: fullMessage,
+          content,
         }),
       });
 
@@ -66,15 +63,6 @@ export default function SendMessagePage() {
           type="text"
           value={receiverId}
           disabled
-          style={{ width: "100%", padding: "8px", marginBottom: "12px" }}
-        />
-
-        <label>{t("title")}</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
           style={{ width: "100%", padding: "8px", marginBottom: "12px" }}
         />
 
