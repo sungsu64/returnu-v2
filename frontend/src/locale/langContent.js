@@ -322,6 +322,16 @@ editFoundTitle: "습득물 수정",
 statusUnclaimedBadge: "미수령",
     statusClaimedBadge: "수령완료",
     editSuccess: "수정이 완료되었습니다!",
+    filterLost: "분실물",
+  filterFound: "습득물",
+  feedbackCollection: "피드백 모음",
+  adminFeedbackPageDesc: "관리자 전용 피드백 확인 페이지입니다.",
+  feedbackLoadError: "피드백 불러오기 실패:",
+  localeCode: "ko-KR",
+  adminEditTitle: "관리자 글 수정",
+  adminPostsTitle: "전체 글 관리",
+  tabRequest: "요청글",
+  
 
 
     // 폼 단일 추가
@@ -654,6 +664,15 @@ editLostTitle: "Edit Lost Item",
     statusUnclaimedBadge: "Unclaimed",
     statusClaimedBadge: "Claimed",
     editSuccess: "Edit completed!",
+    filterLost: "Lost",
+  filterFound: "Found",
+  feedbackCollection: "Feedback Collection",
+  adminFeedbackPageDesc: "This page is for admin feedback review.",
+  feedbackLoadError: "Failed to load feedback:",
+  localeCode: "en-US",
+  adminEditTitle: "Edit Admin Post",
+  adminPostsTitle: "Manage All Posts",
+  tabRequest: "Requests",
 
     
 

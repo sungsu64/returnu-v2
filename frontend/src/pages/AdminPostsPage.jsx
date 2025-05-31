@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLang } from "../locale"; // 추가
 import "../styles/AdminPostsPage.css";
 
 function AdminPostsPage() {
   const navigate = useNavigate();
+  const { t } = useLang(); // 추가
   const [activeTab, setActiveTab] = useState("lost");
   const [lostItems, setLostItems] = useState([]);
   const [lostRequests, setLostRequests] = useState([]);
@@ -32,15 +34,15 @@ function AdminPostsPage() {
         setInquiries(inquiryData);
         setFeedbacks(feedbackData);
       } catch (err) {
-        console.error("글을 불러오는 중 오류 발생:", err);
+        console.error(t("postsLoadError"), err);
       }
     };
 
     fetchData();
-  }, []);
+  }, [t]);
 
   const handleDelete = async (id, type) => {
-    const confirmDelete = window.confirm("정말 삭제하시겠습니까?");
+    const confirmDelete = window.confirm(t("confirmDeleteRequest"));
     if (!confirmDelete) return;
 
     try {
@@ -55,7 +57,7 @@ function AdminPostsPage() {
         setFeedbacks((prev) => prev.filter((item) => item.id !== id));
       }
     } catch (err) {
-      console.error("삭제 중 오류 발생:", err);
+      console.error(t("deleteError"), err);
     }
   };
 
@@ -65,23 +67,22 @@ function AdminPostsPage() {
         <li key={post.id} className="admin-post-item">
           <div className="admin-post-title">{post.title || post.content}</div>
           <div className="admin-post-meta">
-            작성자: {post.student_id} | {post.date || post.created_at}
+            {t("writer")}: {post.student_id} | {post.date || post.created_at}
           </div>
           <div className="admin-post-actions">
-  <button
-    className="edit-button"
-    onClick={() => navigate(`/admin/edit/${type}/${post.id}`)}
-  >
-    수정
-  </button>
-  <button
-    className="delete-button"
-    onClick={() => handleDelete(post.id, type)}
-  >
-    삭제
-  </button>
-</div>
-
+            <button
+              className="edit-button"
+              onClick={() => navigate(`/admin/edit/${type}/${post.id}`)}
+            >
+              {t("edit")}
+            </button>
+            <button
+              className="delete-button"
+              onClick={() => handleDelete(post.id, type)}
+            >
+              {t("delete")}
+            </button>
+          </div>
         </li>
       ))}
     </ul>
@@ -89,31 +90,31 @@ function AdminPostsPage() {
 
   return (
     <div className="admin-posts-wrapper">
-      <h1>전체 글 관리</h1>
+      <h1>{t("adminPostsTitle")}</h1>
       <div className="admin-tabs">
         <button
           className={`admin-tab-button ${activeTab === "lost" ? "active" : ""}`}
           onClick={() => setActiveTab("lost")}
         >
-          분실물
+          {t("tabLost")}
         </button>
         <button
           className={`admin-tab-button ${activeTab === "request" ? "active" : ""}`}
           onClick={() => setActiveTab("request")}
         >
-          요청글
+          {t("tabRequest")}
         </button>
         <button
           className={`admin-tab-button ${activeTab === "inquiry" ? "active" : ""}`}
           onClick={() => setActiveTab("inquiry")}
         >
-          문의글
+          {t("tabInquiry")}
         </button>
         <button
           className={`admin-tab-button ${activeTab === "feedback" ? "active" : ""}`}
           onClick={() => setActiveTab("feedback")}
         >
-          피드백
+          {t("tabFeedback")}
         </button>
       </div>
       {activeTab === "lost" && renderPosts(lostItems, "lost-items")}

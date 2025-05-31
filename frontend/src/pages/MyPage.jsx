@@ -182,8 +182,8 @@ export default function MyPage() {
               user.role === "admin" ? navigate("/admin/inquiries") : navigate("/contact/history")
             }
           />
-         <CircleBtn
-  label={user.role === "admin" ? "피드백 모음" : "클릭해봐"}
+<CircleBtn
+  label={user.role === "admin" ? t("feedbackCollection") : "클릭해봐"}
   icon="🎁"
   onClick={() =>
     user.role === "admin" ? navigate("/admin/feedback") : navigate("/easter-egg")

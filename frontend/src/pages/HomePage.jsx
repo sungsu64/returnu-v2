@@ -7,6 +7,7 @@ import NoticeSlider from "../components/NoticeSlider";
 import FaqChatbot from "../components/FaqChatbot";
 import "../styles/HomePage.css";
 
+// 카테고리 상태는 무조건 한글로!
 const CATEGORY_LIST = ["분실물", "습득물"];
 
 export default function HomePage() {
@@ -14,6 +15,7 @@ export default function HomePage() {
   const location = useLocation();
   const { t } = useLang();
 
+  // 내부 값은 무조건 한글로!
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("분실물");
   const [openCat, setOpenCat] = useState(false);
@@ -53,6 +55,13 @@ export default function HomePage() {
     }
     fetchNotices();
   }, [t]);
+
+  // UI에 보여주는 라벨만 번역!
+  const getCategoryLabel = (cat) => {
+    if (cat === "분실물") return t("filterLost");
+    if (cat === "습득물") return t("filterFound");
+    return cat;
+  };
 
   const colors = {
     bg: isDark ? "#23242c" : "#fafafa",
@@ -114,7 +123,7 @@ export default function HomePage() {
               zIndex: 11
             }}
           >
-            {category} ▾
+            {getCategoryLabel(category)} ▾
             {openCat && (
               <ul style={{
                 position: "absolute",
@@ -136,8 +145,8 @@ export default function HomePage() {
                   <li
                     key={cat}
                     onMouseDown={() => {
-                      setCategory(cat);
-                      setOpenCat(false); // 드롭다운 닫힘 확실히 실행
+                      setCategory(cat); // 값은 무조건 "분실물" "습득물"!
+                      setOpenCat(false);
                     }}
                     style={{
                       padding: "12px 16px",
@@ -150,7 +159,7 @@ export default function HomePage() {
                     onMouseOver={e => e.currentTarget.style.background = colors.dropHover}
                     onMouseOut={e => e.currentTarget.style.background = (category === cat ? colors.catBg : "transparent")}
                   >
-                    {cat}
+                    {getCategoryLabel(cat)}
                   </li>
                 ))}
               </ul>
