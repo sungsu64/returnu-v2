@@ -1,4 +1,3 @@
-// src/pages/MessageSentPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLang } from "../locale";
@@ -11,7 +10,6 @@ export default function MessageSentPage() {
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
 
-  // 다크모드 감지
   const isDark = typeof document !== "undefined" && document.body.classList.contains("dark");
 
   useEffect(() => {
@@ -32,20 +30,14 @@ export default function MessageSentPage() {
         if (!res.ok) throw new Error(t("cannotLoadSentMessages"));
         return res.json();
       })
-      .then((data) => {
-        setMessages(data);
-      })
-      .catch((err) => {
-        setError(err.message);
-      });
+      .then((data) => setMessages(data))
+      .catch((err) => setError(err.message));
   }, [user, t]);
 
   const handleDelete = (id) => {
     if (!window.confirm(t("confirmDeleteMessage"))) return;
 
-    fetch(`/api/messages/${id}`, {
-      method: "DELETE",
-    })
+    fetch(`/api/messages/${id}`, { method: "DELETE" })
       .then((res) => {
         if (!res.ok) throw new Error(t("deleteFailed"));
         setMessages((prev) => prev.filter((msg) => msg.id !== id));
@@ -65,11 +57,26 @@ export default function MessageSentPage() {
 
   return (
     <div className="app-wrapper">
+      {/* 🔙 뒤로가기 버튼 */}
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          margin: "12px 16px 0",
+          padding: "6px 12px",
+          borderRadius: "6px",
+          border: "1px solid #ccc",
+          background: "#f9f9f9",
+          cursor: "pointer",
+        }}
+      >
+        ← 뒤로가기
+      </button>
+
       <h2
         style={{
           margin: "16px",
           fontSize: "1.4rem",
-          color: isDark ? "#ffd377" : "#1676b3"
+          color: isDark ? "#ffd377" : "#1676b3",
         }}
       >
         📤 {t("sentMessages")}
@@ -93,15 +100,10 @@ export default function MessageSentPage() {
                 ? "0 2px 12px rgba(0,0,0,0.16)"
                 : "0 1px 4px rgba(0,0,0,0.06)",
               position: "relative",
-              transition: "background 0.18s, color 0.18s"
+              transition: "background 0.18s, color 0.18s",
             }}
           >
-            <p
-              style={{
-                fontWeight: "bold",
-                color: isDark ? "#ffe4ad" : "#1676b3"
-              }}
-            >
+            <p style={{ fontWeight: "bold", color: isDark ? "#ffe4ad" : "#1676b3" }}>
               {msg.content.split("\n")[0]}
             </p>
             <p style={{ margin: "8px 0", color: isDark ? "#fff" : "#333" }}>
@@ -122,7 +124,7 @@ export default function MessageSentPage() {
                 cursor: "pointer",
                 fontSize: "0.8rem",
                 marginTop: "8px",
-                boxShadow: isDark ? "0 1px 4px #101119" : undefined
+                boxShadow: isDark ? "0 1px 4px #101119" : undefined,
               }}
             >
               {t("delete")}

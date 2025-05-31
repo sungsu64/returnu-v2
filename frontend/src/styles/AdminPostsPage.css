@@ -7,11 +7,40 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.admin-posts-wrapper h1 {
+.admin-posts-title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 0 8px;
+}
+
+.admin-posts-title-bar h1 {
   font-size: 28px;
-  text-align: center;
-  margin-bottom: 30px;
   color: #333;
+  margin: 0;
+  flex-grow: 1;
+  min-width: 0;
+  word-break: keep-all;
+}
+
+.back-button {
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: 6px 14px;
+  font-size: 14px;
+  background-color: #e0e0e0;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: #d5d5d5;
 }
 
 .admin-tabs {
@@ -78,104 +107,23 @@
   color: white;
 }
 
-.admin-post-actions .reply-button {
+.admin-post-actions .reply-button,
+.edit-button {
   background-color: #4caf50;
   color: white;
 }
 
-.admin-posts-wrapper {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.edit-button:hover {
+  background-color: #45a049;
 }
 
-.admin-posts-wrapper h1 {
-  font-size: 28px;
-  text-align: center;
-  margin-bottom: 30px;
-  color: #333;
-}
-
-.admin-tabs {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.admin-tab-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 24px;
-  background-color: #e0e0e0;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.admin-tab-button.active {
-  background-color: #4a90e2;
-  color: white;
-}
-
-.admin-posts-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.admin-post-item {
-  border-bottom: 1px solid #ddd;
-  padding: 16px 0;
-}
-
-.admin-post-title {
-  font-size: 18px;
-  font-weight: 500;
-  margin-bottom: 6px;
-}
-
-.admin-post-meta {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 10px;
-}
-
-.admin-post-actions {
-  display: flex;
-  gap: 12px;
-}
-
-.admin-post-actions button {
-  padding: 6px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 8px;
-  border: none;
-  transition: background-color 0.2s ease;
-}
-
-.admin-post-actions .delete-button {
-  background-color: #f44336;
-  color: white;
-}
-
-.admin-post-actions .reply-button {
-  background-color: #4caf50;
-  color: white;
-}
-
-
-/* ------------------- 다크모드 스타일 추가 --------------------- */
+/* ------------------- 다크모드 스타일 --------------------- */
 body.dark .admin-posts-wrapper {
   background-color: #23242a !important;
   box-shadow: 0 4px 18px rgba(0,0,0,0.15) !important;
 }
 
-body.dark .admin-posts-wrapper h1 {
+body.dark .admin-posts-title-bar h1 {
   color: #ffe1ac !important;
 }
 
@@ -206,20 +154,18 @@ body.dark .admin-post-actions .delete-button {
   color: #ffe1ac !important;
 }
 
-body.dark .admin-post-actions .reply-button {
+body.dark .admin-post-actions .reply-button,
+body.dark .edit-button {
   background-color: #358150 !important;
   color: #ffe1ac !important;
 }
 
-.edit-button {
-  margin-right: 8px;
-  background-color: #4caf50;
-  color: white;
-  padding: 5px 10px;
-  border: none;
-  cursor: pointer;
+body.dark .back-button {
+  background-color: #353745 !important;
+  color: #ffe1ac !important;
+  border: 1px solid #555 !important;
 }
 
-.edit-button:hover {
-  background-color: #45a049;
+body.dark .back-button:hover {
+  background-color: #3f414f !important;
 }

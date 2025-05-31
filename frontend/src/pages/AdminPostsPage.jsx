@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLang } from "../locale"; // 추가
+import { useLang } from "../locale";
 import "../styles/AdminPostsPage.css";
 
 function AdminPostsPage() {
   const navigate = useNavigate();
-  const { t } = useLang(); // 추가
+  const { t } = useLang();
+
   const [activeTab, setActiveTab] = useState("lost");
   const [lostItems, setLostItems] = useState([]);
   const [lostRequests, setLostRequests] = useState([]);
@@ -90,7 +91,16 @@ function AdminPostsPage() {
 
   return (
     <div className="admin-posts-wrapper">
-      <h1>{t("adminPostsTitle")}</h1>
+      <div className="admin-posts-header">
+  <div className="admin-posts-title-bar">
+    <h1>{t("adminPostsTitle")}</h1>
+    <button className="back-button" onClick={() => navigate(-1)}>
+      ← {t("back")}
+    </button>
+  </div>
+</div>
+
+
       <div className="admin-tabs">
         <button
           className={`admin-tab-button ${activeTab === "lost" ? "active" : ""}`}
@@ -117,6 +127,7 @@ function AdminPostsPage() {
           {t("tabFeedback")}
         </button>
       </div>
+
       {activeTab === "lost" && renderPosts(lostItems, "lost-items")}
       {activeTab === "request" && renderPosts(lostRequests, "lost-requests")}
       {activeTab === "inquiry" && renderPosts(inquiries, "inquiries")}

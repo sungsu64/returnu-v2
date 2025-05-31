@@ -69,6 +69,21 @@ export default function MessageInboxPage() {
 
   return (
     <div className="app-wrapper">
+      {/* 🔙 뒤로가기 버튼 추가 */}
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          margin: "12px 16px 0",
+          padding: "6px 12px",
+          borderRadius: "6px",
+          border: "1px solid #ccc",
+          background: "#f9f9f9",
+          cursor: "pointer",
+        }}
+      >
+        ← 뒤로가기
+      </button>
+
       <h2 style={{ margin: "16px", fontSize: "1.4rem", color: isDark ? "#ffd377" : "#d19c66" }}>
         📥 {t("inbox")}
       </h2>
