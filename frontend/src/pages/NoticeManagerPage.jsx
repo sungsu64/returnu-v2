@@ -4,7 +4,7 @@ import "../mobile-ui.css";
 import { useLang } from "../locale";
 
 export default function NoticeManagerPage() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [notices, setNotices] = useState([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -19,7 +19,11 @@ export default function NoticeManagerPage() {
   useEffect(() => {
     fetch("http://localhost:8090/api/notices")
       .then((res) => res.json())
-      .then(setNotices)
+      .then((data) => {
+        setNotices(data);
+        // 콘솔에서 데이터 직접 확인 가능
+        console.log("notices:", data);
+      })
       .catch(() => alert(t("noticeLoadError")));
   }, [t]);
 
@@ -205,7 +209,10 @@ export default function NoticeManagerPage() {
                 marginBottom: "6px",
               }}
             >
-              {n.title}
+              {/* 언어에 따라 표시 */}
+              {lang === "en"
+                ? n.title_en || n.title
+                : n.title}
             </h3>
             <p
               style={{
@@ -216,10 +223,12 @@ export default function NoticeManagerPage() {
                 lineHeight: 1.6,
               }}
             >
-              {n.content}
+              {lang === "en"
+                ? n.content_en || n.content
+                : n.content}
             </p>
             <p style={{ fontSize: "0.8rem", color: isDark ? "#888" : "#999" }}>
-              📅 {new Date(n.created_at).toLocaleDateString("ko-KR")}
+              📅 {new Date(n.created_at).toLocaleDateString(lang === "en" ? "en-US" : "ko-KR")}
             </p>
             <div style={{ marginTop: "8px" }}>
               <button

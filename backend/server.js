@@ -348,16 +348,19 @@ app.post("/api/login", (req, res) => {
 
 // 🔽 공지사항 관련
 app.get("/api/notices", (req, res) => {
-  const query = `SELECT id, title, content, created_at FROM notices ORDER BY created_at DESC`;
+  const query = `
+  SELECT id, title, content, title_en, content_en, created_at FROM notices ORDER BY created_at 
+  `;
   connection.query(query, (err, results) => {
     if (err) return res.status(500).send("서버 에러");
     res.json(results);
   });
 });
 
+
 app.get("/api/notices/:id", (req, res) => {
   const { id } = req.params;
-  const query = `SELECT id, title, content FROM notices WHERE id = ?`;
+  const query = `SELECT id, title, content, title_en, content_en FROM notices WHERE id = ?`;
   connection.query(query, [id], (err, results) => {
     if (err) return res.status(500).send("서버 에러");
     if (results.length === 0) return res.status(404).send("공지 없음");
@@ -365,11 +368,12 @@ app.get("/api/notices/:id", (req, res) => {
   });
 });
 
+
 app.post("/api/notices", (req, res) => {
-  const { title, content } = req.body;
+  const { title, content, title_en, content_en } = req.body;
   connection.query(
-    "INSERT INTO notices (title, content) VALUES (?, ?)",
-    [title, content],
+    "INSERT INTO notices (title, content, title_en, content_en) VALUES (?, ?, ?, ?)",
+    [title, content, title_en || null, content_en || null],
     (err, result) => {
       if (err) return res.status(500).send("서버 에러");
       res.status(201).json({ id: result.insertId });
@@ -379,16 +383,17 @@ app.post("/api/notices", (req, res) => {
 
 app.put("/api/notices/:id", (req, res) => {
   const { id } = req.params;
-  const { title, content } = req.body;
+  const { title, content, title_en, content_en } = req.body;
   connection.query(
-    "UPDATE notices SET title = ?, content = ? WHERE id = ?",
-    [title, content, id],
+    "UPDATE notices SET title = ?, content = ?, title_en = ?, content_en = ? WHERE id = ?",
+    [title, content, title_en || null, content_en || null, id],
     (err) => {
       if (err) return res.status(500).send("서버 에러");
       res.json({ message: "수정 완료" });
     }
   );
 });
+
 
 app.delete("/api/notices/:id", (req, res) => {
   const { id } = req.params;
