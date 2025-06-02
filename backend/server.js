@@ -151,6 +151,27 @@ app.get("/api/lost-items/search", (req, res) => {
   });
 });
 
+// 습득물(분실물) 수령 처리 API (추가)
+app.post("/api/lost-items/claim/:id", (req, res) => {
+  const { id } = req.params;
+  const { claimed_by } = req.body;
+  if (!claimed_by) {
+    return res.status(400).json({ error: "수령자 이름이 필요합니다." });
+  }
+  const query = "UPDATE lost_items SET claimed_by = ? WHERE id = ?";
+  connection.query(query, [claimed_by, id], (err, result) => {
+    if (err) {
+      console.error("❌ 수령 처리 실패:", err);
+      return res.status(500).json({ error: "서버 오류" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "해당 분실물이 없습니다." });
+    }
+    res.json({ success: true });
+  });
+});
+
+
 // 분실물 등록(POST) 라우트 -- 반드시 추가!
 app.post("/api/lost-items", upload.single("image"), (req, res) => {
   const { title, location, date, description, category, student_id } = req.body;
