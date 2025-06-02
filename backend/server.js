@@ -172,6 +172,8 @@ app.post("/api/lost-items/claim/:id", (req, res) => {
 });
 
 
+
+
 // 분실물 등록(POST) 라우트 -- 반드시 추가!
 app.post("/api/lost-items", upload.single("image"), (req, res) => {
   const { title, location, date, description, category, student_id } = req.body;
@@ -194,6 +196,21 @@ app.post("/api/lost-items", upload.single("image"), (req, res) => {
       return res.status(500).json({ error: "서버 오류" });
     }
     res.status(201).json({ message: "등록 성공", id: result.insertId });
+  });
+});
+
+// 분실물 삭제
+app.delete("/api/lost-items/:id", (req, res) => {
+  const { id } = req.params;
+  connection.query("DELETE FROM lost_items WHERE id = ?", [id], (err, result) => {
+    if (err) {
+      console.error("❌ 분실물 삭제 오류:", err);
+      return res.status(500).json({ error: "삭제 실패" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "해당 분실물이 없습니다." });
+    }
+    res.status(200).json({ message: "삭제 완료" });
   });
 });
 
